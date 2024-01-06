@@ -6,7 +6,7 @@ export default function ButtonIcon(props: ButtonIconProps) {
 			{...props}
 			className={`${props.className} ${
 				sizes[props.size || 'medium']
-			} inline-flex items-center text-sm hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:hover:bg-gray-700 dark:focus:ring-gray-600 mr-1`}
+			} inline-flex items-center text-sm hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:hover:bg-gray-700 dark:focus:ring-gray-600`}
 		/>
 	)
 }
@@ -17,6 +17,7 @@ export interface ButtonIconProps
 }
 
 const sizes = {
+	xSmall: 'p-0.5 rounded-sm',
 	small: 'p-1 rounded-md',
 	medium: 'p-2 rounded-lg',
 }

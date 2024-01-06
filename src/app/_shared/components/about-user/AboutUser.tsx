@@ -26,7 +26,7 @@ export default function AboutUser(props: AboutUserProps) {
 						Save & Update
 					</button>
 				) : (
-					<ButtonIcon size='small' onClick={() => setIsEditing(true)}>
+					<ButtonIcon onClick={() => setIsEditing(true)}>
 						<Icon
 							name='pencil-outline'
 							className='w-4 h-4 text-gray-700 dark:text-gray-200'

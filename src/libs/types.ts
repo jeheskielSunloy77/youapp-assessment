@@ -6,6 +6,7 @@ export interface User {
 	zodiac: Zodiac
 	horoscope: string
 	gender: Gender
+	intrests: string[]
 }
 
 export type Gender = 'Male' | 'Female'

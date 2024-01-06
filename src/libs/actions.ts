@@ -1,9 +1,13 @@
 'use server'
 
 import { cookies } from 'next/headers'
+import { redirect } from 'next/navigation'
 import { Gender, User, Zodiac } from './types'
 
 export async function updateUserAbout(formData: FormData) {
+	const store = cookies()
+	const userCookie = store.get('user')?.value
+	const oldUser: User | null = userCookie ? JSON.parse(userCookie) : null
 	const user: User = {
 		name: formData.get('name') as string,
 		birthday: new Date(formData.get('birthday') as string),
@@ -12,8 +16,21 @@ export async function updateUserAbout(formData: FormData) {
 		zodiac: formData.get('zodiac') as Zodiac,
 		gender: formData.get('gender') as Gender,
 		horoscope: formData.get('horoscope') as string,
+		intrests: oldUser?.intrests || [],
 	}
-	cookies().set('user', JSON.stringify(user))
+	store.set('user', JSON.stringify(user))
+}
+
+export async function updateUserIntrest(formData: FormData) {
+	const store = cookies()
+	const userCookie = store.get('user')?.value
+	const oldUser: User = userCookie ? JSON.parse(userCookie) : null
+	const user: User = {
+		...oldUser,
+		intrests: formData.getAll('intrests') as string[],
+	}
+	store.set('user', JSON.stringify(user))
+	redirect('/')
 }
 
 export async function getUser() {
