@@ -4,6 +4,7 @@ import Icon from '@/components/icon/Icon'
 import { updateUserAbout } from '@/libs/actions'
 import { zodiacs } from '@/libs/constants'
 import { User } from '@/libs/types'
+import dayjs from 'dayjs'
 import Image from 'next/image'
 import { Dispatch, SetStateAction, useState } from 'react'
 
@@ -35,17 +36,51 @@ export default function AboutUser(props: AboutUserProps) {
 				)}
 			</div>
 			{isEditing ? (
-				<Form setIsEditing={setIsEditing} user={props.user} />
+				<EditForm setIsEditing={setIsEditing} user={props.user} />
 			) : (
-				<p className='text-sm text-gray-700 dark:text-gray-400'>
-					Add in yours to help others know you better.
-				</p>
+				<UserInfo user={props.user} />
 			)}
 		</div>
 	)
 }
 
-function Form(
+function UserInfo(props: AboutUserProps) {
+	if (!props.user)
+		return (
+			<p className='text-sm text-gray-700 dark:text-gray-400'>
+				Add in yours to help others know you better.
+			</p>
+		)
+	return (
+		<div>
+			<div className='space-y-2'>
+				<p className='text-black dark:text-white'>
+					<span className='text-gray-300 dark:text-gray-600'>Birthday: </span>
+					{dayjs(props.user.birthday).format('DD / MM / YYYY')} (Age
+					{dayjs().diff(props.user.birthday, 'year')})
+				</p>
+				<p className='text-black dark:text-white'>
+					<span className='text-gray-300 dark:text-gray-600'>Horoscope: </span>
+					{props.user.horoscope}
+				</p>
+				<p className='text-black dark:text-white'>
+					<span className='text-gray-300 dark:text-gray-600'>Zodiac: </span>
+					{props.user.zodiac}
+				</p>
+				<p className='text-black dark:text-white'>
+					<span className='text-gray-300 dark:text-gray-600'>Height: </span>
+					{props.user.height}
+				</p>
+				<p className='text-black dark:text-white'>
+					<span className='text-gray-300 dark:text-gray-600'>Weight: </span>
+					{props.user.weight}
+				</p>
+			</div>
+		</div>
+	)
+}
+
+function EditForm(
 	props: AboutUserProps & { setIsEditing: Dispatch<SetStateAction<boolean>> }
 ) {
 	const [birthday, setBirthday] = useState<string | undefined>(
