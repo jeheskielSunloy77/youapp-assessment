@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { createHash, randomBytes } from 'crypto';
 import { Model } from 'mongoose';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -9,8 +10,24 @@ import { User } from './schemas/user.schema';
 export class UsersService {
   constructor(@InjectModel('User') private readonly userModel: Model<User>) {}
 
+  private genSalt() {
+    const lenght = Math.random() * (26 - 20) + 20;
+    const salt = randomBytes(Math.ceil(lenght / 2))
+      .toString('base64')
+      .slice(0, lenght);
+
+    return salt;
+  }
+
   async create(createUserDto: CreateUserDto) {
     const newUser = new this.userModel(createUserDto);
+
+    newUser.passwordSalt = this.genSalt();
+
+    newUser.password = createHash('sha256')
+      .update(newUser.password + newUser.passwordSalt)
+      .digest('hex');
+
     return await newUser.save();
   }
 
@@ -18,17 +35,24 @@ export class UsersService {
     return await this.userModel.find().exec();
   }
 
-  async findOne(id: number) {
-    return await this.userModel.findById(id).exec();
+  async findOne(params: string | Parameters<typeof this.userModel.findOne>[0]) {
+    if (typeof params === 'string')
+      return await this.userModel.findById(params).exec();
+
+    return await this.userModel.findOne().exec();
   }
 
-  async update(id: number, updateUserDto: UpdateUserDto) {
+  async exists(params: Parameters<typeof this.userModel.exists>[0]) {
+    return await this.userModel.exists(params);
+  }
+
+  async update(id: string, updateUserDto: UpdateUserDto) {
     return await this.userModel.findByIdAndUpdate(id, updateUserDto, {
       new: true,
     });
   }
 
-  async remove(id: number) {
+  async remove(id: string) {
     return await this.userModel.findByIdAndDelete(id);
   }
 }
