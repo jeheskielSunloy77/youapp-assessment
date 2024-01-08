@@ -21,6 +21,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersService } from './users.service';
 
 const avatarFilePipe = new ParseFilePipe({
+  fileIsRequired: false,
   validators: [
     new MaxFileSizeValidator({ maxSize: 1024 * 1024 * 1 }),
     new FileTypeValidator({

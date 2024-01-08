@@ -5,7 +5,7 @@ import {
 } from '@aws-sdk/client-s3';
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { createHash, randomBytes } from 'crypto';
+import * as bcrypt from 'bcrypt';
 import { Model } from 'mongoose';
 import { CreateUserDto } from './dto/create-user.dto';
 import { LoginUserDto } from './dto/login-user.dto';
@@ -66,22 +66,10 @@ export class UsersService {
     }
   }
 
-  private genSalt() {
-    const lenght = Math.random() * (26 - 20) + 20;
-    const salt = randomBytes(Math.ceil(lenght / 2))
-      .toString('base64')
-      .slice(0, lenght);
-
-    return salt;
-  }
-
   async create(createUserDto: CreateUserDto, avatar?: Express.Multer.File) {
     const newUser = new this.userModel(createUserDto);
 
-    newUser.passwordSalt = this.genSalt();
-    newUser.password = createHash('sha256')
-      .update(newUser.password + newUser.passwordSalt)
-      .digest('hex');
+    newUser.password = await bcrypt.hash(newUser.password, 10);
 
     if (!avatar) return await newUser.save();
 
@@ -150,10 +138,6 @@ export class UsersService {
     });
     if (!user) return;
 
-    const password = createHash('sha256')
-      .update(loginUserDto.password + user.passwordSalt)
-      .digest('hex');
-
-    if (password === user.password) return user;
+    if (await bcrypt.compare(loginUserDto.password, user.password)) return user;
   }
 }
