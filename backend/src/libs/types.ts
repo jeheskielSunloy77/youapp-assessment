@@ -1,8 +1,10 @@
 export type Gender = keyof typeof Genders;
+export const Genders = {
+  Male: 'Male',
+  Female: 'Female',
+};
 
 export type Zodiac = keyof typeof Zodiacs;
-export type Horoscope = keyof typeof Horoscopes;
-
 export const Zodiacs = {
   Aries: 'Aries',
   Taurus: 'Taurus',
@@ -18,11 +20,7 @@ export const Zodiacs = {
   Pisces: 'Pisces',
 };
 
-export const Genders = {
-  Male: 'Male',
-  Female: 'Female',
-};
-
+export type Horoscope = keyof typeof Horoscopes;
 export const Horoscopes = {
   Tiger: 'Tiger',
   Ox: 'Ox',
