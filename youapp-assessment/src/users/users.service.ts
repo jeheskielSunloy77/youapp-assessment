@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { createHash, randomBytes } from 'crypto';
 import { Model } from 'mongoose';
 import { CreateUserDto } from './dto/create-user.dto';
+import { LoginUserDto } from './dto/login-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './schemas/user.schema';
 
@@ -54,5 +55,21 @@ export class UsersService {
 
   async remove(id: string) {
     return await this.userModel.findByIdAndDelete(id);
+  }
+
+  async login(loginUserDto: LoginUserDto) {
+    const user = await this.userModel.findOne({
+      $or: [
+        { email: loginUserDto.credential },
+        { name: loginUserDto.credential },
+      ],
+    });
+    if (!user) return;
+
+    const password = createHash('sha256')
+      .update(loginUserDto.password + user.passwordSalt)
+      .digest('hex');
+
+    if (password === user.password) return user;
   }
 }
