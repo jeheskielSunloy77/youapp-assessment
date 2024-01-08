@@ -1,0 +1,55 @@
+# compiled output
+/backend/dist
+/frontend/.next/
+/frontend/out/
+/frontend/build
+
+# dependencies
+/*/node_modules
+/*/.pnp
+/*/.pnp.js
+/*/.yarn/install-state.gz
+
+# Logs
+/backend/logs
+/backend/*.log
+/*/npm-debug.log*
+/*/pnpm-debug.log*
+/*/yarn-debug.log*
+/backend/yarn-error.log*
+/backend/lerna-debug.log*
+
+# misc
+/*/.DS_Store
+/*/*.pem
+
+# Tests
+/*/coverage
+/backend/.nyc_output
+
+# IDEs and editors
+/.idea
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# environment variables
+/*/.env
+/frontend/.env*.local
+
+# vercel
+/frontend/.vercel
+
+# typescript
+/frontend/*.tsbuildinfo
+/frontend/next-env.d.ts
