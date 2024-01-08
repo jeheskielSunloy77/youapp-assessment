@@ -1,5 +1,4 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { IsOptional } from 'class-validator';
 import { Gender, Genders, Horoscopes, Zodiac, Zodiacs } from 'src/libs/types';
 
 @Schema()
@@ -11,10 +10,7 @@ export class User {
     unique: true,
     minlength: 3,
     required: true,
-    validate: {
-      validator: (email: string) => /\S+@\S+\.\S+/.test(email),
-      message: 'Invalid email',
-    },
+    match: /\S+@\S+\.\S+/,
   })
   email: string;
 
@@ -23,6 +19,14 @@ export class User {
 
   @Prop({ required: true, minlength: 6 })
   passwordSalt: string;
+
+  @Prop({
+    unique: true,
+    match: new RegExp(
+      `^https:\/\/[a-zA-Z0-9-]+\.s3\.[a-zA-Z0-9-]+\.amazonaws\.com\/`,
+    ),
+  })
+  avatarUrl: string;
 
   @Prop({ type: Date, max: new Date() })
   birthday: Date;
@@ -42,7 +46,6 @@ export class User {
   @Prop({ type: String, enum: Horoscopes })
   horoscope: string;
 
-  @IsOptional()
   @Prop({
     type: [{ type: String, minlength: 3, maxlength: 20 }],
   })
