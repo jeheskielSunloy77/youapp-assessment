@@ -1,7 +1,7 @@
 import Button from '@/components/buttons/button/Button'
 import Navbar from '@/components/layout/navbar/Navbar'
 import { getUser, updateUserIntrest } from '@/libs/actions'
-import IntrestInput from '../../components/tags-input/TagsInput'
+import InputTags from '../../components/inputs/input-tags/InputTags'
 
 export default async function UpdateIntrest() {
 	const user = await getUser()
@@ -26,7 +26,7 @@ export default async function UpdateIntrest() {
 						</h1>
 					</div>
 					<form id='update-intrest' action={updateUserIntrest}>
-						<IntrestInput tags={user?.intrests} name='intrests' />
+						<InputTags tags={user?.intrests} name='intrests' />
 					</form>
 				</div>
 			</main>

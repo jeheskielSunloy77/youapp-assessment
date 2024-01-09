@@ -20,4 +20,4 @@ export default function Register() {
 	)
 }
 
-export const metadata: Metadata = { title: 'Register' }
+export const metadata: Metadata = { title: 'Register new user' }

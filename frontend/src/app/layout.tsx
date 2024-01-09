@@ -1,3 +1,4 @@
+import GlobalProviders from '@/contexts/global-providers'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
@@ -19,7 +20,7 @@ export default function RootLayout({
 			<body
 				className={`${inter.className} bg-gradient-to-tr from-white via-gray-100 to-gray-300 dark:from-black dark:via-gray-900 dark:to-teal-900`}
 			>
-				{children}
+				<GlobalProviders>{children}</GlobalProviders>
 			</body>
 		</html>
 	)

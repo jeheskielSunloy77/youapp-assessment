@@ -9,7 +9,7 @@ interface Props {
 	name?: string
 }
 
-export default function TagsInput(props: Props) {
+export default function InputTags(props: Props) {
 	const [tags, setTags] = useState(props.tags || [])
 
 	function handleOnKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {

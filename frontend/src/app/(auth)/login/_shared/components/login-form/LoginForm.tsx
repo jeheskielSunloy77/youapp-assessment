@@ -1,31 +1,56 @@
 'use client'
 import Icon from '@/components/icon/Icon'
-import { useState } from 'react'
+import { login } from '@/libs/actions'
+import { useRouter } from 'next/navigation'
+import { FormEvent, useState } from 'react'
+import toast from 'react-hot-toast'
 
 export default function LoginForm() {
 	const [isPasswordVisible, setIsPasswordVisible] = useState(false)
-	const [isReadyToSubmit, setIsReadyToSubmit] = useState(false)
+	const [isSubmittable, setIsSubmitable] = useState(false)
+
+	const router = useRouter()
+
+	function handleSubmit(e: FormEvent<HTMLFormElement>) {
+		e.preventDefault()
+		const promise = login({
+			credential: e.currentTarget.credential.value,
+			password: e.currentTarget.password.value,
+		}).then((err) => {
+			if (err) throw err
+		})
+
+		toast.promise(promise, {
+			loading: 'Logging in...',
+			success: () => {
+				router.push('/')
+				return 'Login successful'
+			},
+			error: (err) => err,
+		})
+	}
+
 	return (
 		<form
-			className='space-y-4'
-			onChange={(e) => {
-				const username = e.currentTarget.username.value
-				const password = e.currentTarget.password.value
-				if (username && password) setIsReadyToSubmit(true)
-				else setIsReadyToSubmit(false)
-			}}
+			className='space-y-6'
+			onChange={(e) => setIsSubmitable(e.currentTarget.checkValidity())}
+			onSubmit={handleSubmit}
 		>
 			<input
-				name='username'
-				className='bg-gray-50 text-gray-900 opacity-80 dark:opacity-80 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
+				className='input-primary'
+				name='credential'
 				placeholder='Enter Username/Email'
+				minLength={3}
+				required
 			/>
 			<div className='relative'>
 				<input
+					className='input-primary'
 					type={isPasswordVisible ? 'text' : 'password'}
 					name='password'
-					className='bg-gray-50 text-gray-900 opacity-80 dark:opacity-80 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
 					placeholder='Enter Password'
+					minLength={8}
+					required
 				/>
 				<Icon
 					name={isPasswordVisible ? 'eye-off-outline' : 'eye-outline'}
@@ -33,9 +58,10 @@ export default function LoginForm() {
 					onClick={() => setIsPasswordVisible((prev) => !prev)}
 				/>
 			</div>
+
 			<button
 				type='submit'
-				disabled={!isReadyToSubmit}
+				disabled={!isSubmittable}
 				className='w-full font-bold text-white bg-gradient-to-r from-green-300 via-blue-500 to-purple-600 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 disabled:opacity-60'
 			>
 				Login
