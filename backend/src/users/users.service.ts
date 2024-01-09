@@ -8,7 +8,6 @@ import { InjectModel } from '@nestjs/mongoose';
 import * as bcrypt from 'bcrypt';
 import { Model } from 'mongoose';
 import { CreateUserDto } from './dto/create-user.dto';
-import { LoginUserDto } from './dto/login-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './schemas/user.schema';
 
@@ -77,7 +76,7 @@ export class UsersService {
       avatar,
       `youapp-assessment/users/${newUser.id}/avatar`,
     );
-    if (error) return { message: 'Error when uploading avatar file!' };
+    if (error) throw InternalServerErrorException;
 
     newUser.avatarUrl = url;
     return await newUser.save();
@@ -103,23 +102,26 @@ export class UsersService {
     updateUserDto: UpdateUserDto,
     avatar?: Express.Multer.File,
   ) {
-    if (avatar) {
-      const { error, url } = await this.uploadFile(
-        avatar,
-        `youapp-assessment/users/${id}/avatar`,
-      );
-      if (error) return { message: 'Error when uploading avatar file!' };
+    if (updateUserDto.password)
+      updateUserDto.password = await bcrypt.hash(updateUserDto.password, 10);
 
-      return await this.userModel.findByIdAndUpdate(
-        id,
-        { ...updateUserDto, avatarUrl: url },
-        { new: true },
-      );
+    if (!avatar) {
+      return await this.userModel.findByIdAndUpdate(id, updateUserDto, {
+        new: true,
+      });
     }
 
-    return await this.userModel.findByIdAndUpdate(id, updateUserDto, {
-      new: true,
-    });
+    const { error, url } = await this.uploadFile(
+      avatar,
+      `youapp-assessment/users/${id}/avatar`,
+    );
+    if (error) return { message: 'Error when uploading avatar file!' };
+
+    return await this.userModel.findByIdAndUpdate(
+      id,
+      { ...updateUserDto, avatarUrl: url },
+      { new: true },
+    );
   }
 
   async remove(id: string) {
@@ -127,17 +129,5 @@ export class UsersService {
     if (error) throw InternalServerErrorException;
 
     return await this.userModel.findByIdAndDelete(id);
-  }
-
-  async login(loginUserDto: LoginUserDto) {
-    const user = await this.userModel.findOne({
-      $or: [
-        { email: loginUserDto.credential },
-        { name: loginUserDto.credential },
-      ],
-    });
-    if (!user) return;
-
-    if (await bcrypt.compare(loginUserDto.password, user.password)) return user;
   }
 }

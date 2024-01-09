@@ -1,0 +1,33 @@
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt';
+import { CreateUserDto } from 'src/users/dto/create-user.dto';
+import { UsersService } from 'src/users/users.service';
+
+@Injectable()
+export class AuthService {
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly jwtService: JwtService,
+  ) {}
+
+  async logIn(credential: string, password: string) {
+    const user = await this.usersService.findOne({
+      $or: [{ name: credential }, { email: credential }],
+    });
+    const isMatched = await bcrypt.compare(password, user.password);
+    if (!isMatched) throw new UnauthorizedException();
+
+    return {
+      accessToken: await this.jwtService.signAsync(user.toObject()),
+    };
+  }
+
+  async register(createUserDto: CreateUserDto) {
+    const user = await this.usersService.create(createUserDto);
+
+    return {
+      accessToken: await this.jwtService.signAsync(user.toObject()),
+    };
+  }
+}

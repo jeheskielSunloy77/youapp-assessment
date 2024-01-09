@@ -19,6 +19,7 @@ export class User {
 
   @Prop({
     unique: true,
+    sparse: true,
     match: new RegExp(
       `^https:\/\/[a-zA-Z0-9-]+\.s3\.[a-zA-Z0-9-]+\.amazonaws\.com\/`,
     ),

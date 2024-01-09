@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -16,7 +15,6 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CreateUserDto } from './dto/create-user.dto';
-import { LoginUserDto } from './dto/login-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersService } from './users.service';
 
@@ -67,13 +65,6 @@ export class UsersController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.usersService.remove(id);
-  }
-
-  @Post('login')
-  async login(@Body() loginUserDto: LoginUserDto) {
-    const user = await this.usersService.login(loginUserDto);
-    if (!user) throw new BadRequestException('Invalid credentials');
-    return user;
   }
 
   // need to be deleted on production
