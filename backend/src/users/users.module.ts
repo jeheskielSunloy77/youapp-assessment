@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { IsUniqueConstraint } from './dto/validators/is-user-already';
-import { UserSchema } from './schemas/user.schema';
+import { UserSchema } from './user.schema';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 

@@ -30,4 +30,9 @@ export class AuthService {
       accessToken: await this.jwtService.signAsync(user.toObject()),
     };
   }
+
+  async getUserFromToken(token: string) {
+    const payload = await this.jwtService.verifyAsync(token);
+    if (payload._id) return this.usersService.findOne(payload._id);
+  }
 }
