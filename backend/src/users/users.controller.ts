@@ -28,8 +28,8 @@ const avatarFilePipe = new ParseFilePipe({
     new BadRequestException([{ property: 'avatar', message: error }]),
   validators: [
     new MaxFileSizeValidator({
-      maxSize: 1024 * 1024 * 1,
-      message: 'File size must be less than 1MB',
+      maxSize: 1024 * 1024 * 3,
+      message: 'File size must be less than 3MB',
     }),
     new FileTypeValidator({ fileType: /image\/(jpg|png|jpeg|webp)/ }),
   ],

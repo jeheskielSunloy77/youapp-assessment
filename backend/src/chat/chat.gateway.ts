@@ -7,7 +7,7 @@ import {
   WebSocketServer,
   WsException,
 } from '@nestjs/websockets';
-import { Server, Socket } from 'socket.io';
+import type { Server, Socket } from 'socket.io';
 import { ChatService } from './chat.service';
 import { ChatDto } from './dto/chat.dto';
 

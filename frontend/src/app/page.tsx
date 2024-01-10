@@ -28,13 +28,13 @@ export default async function Home() {
 						}
 						className='bg-center bg-cover flex items-start justify-end flex-col bg-gray-100 dark:bg-gray-800 rounded-lg h-60 p-2 gap-2'
 					>
-						<div className='mix-blend-difference'>
-							<h6 className='font-bold text-white'>
+						<div className='text-gray-100'>
+							<h6 className='font-bold'>
 								@{user.name}
 								{age && `, ${age}`}
 							</h6>
 							{user.gender && (
-								<span className='text-sm text-white font-medium'>{user.gender}</span>
+								<span className='text-sm font-medium'>{user.gender}</span>
 							)}
 						</div>
 						{user.zodiac && user.horoscope && (

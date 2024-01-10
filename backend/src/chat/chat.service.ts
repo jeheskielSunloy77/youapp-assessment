@@ -4,14 +4,16 @@ import { WsException } from '@nestjs/websockets';
 import { Model } from 'mongoose';
 import { Socket } from 'socket.io';
 import { AuthService } from 'src/auth/auth.service';
-import { User } from 'src/users/user.schema';
-import { ChatDocument } from './chat.schema';
+import { S3Service } from 'src/s3/s3.service';
+import { User } from 'src/users/schemas/user.schema';
 import { ChatDto } from './dto/chat.dto';
+import { ChatDocument } from './schemas/chat.schema';
 
 @Injectable()
 export class ChatService {
   constructor(
     private readonly authService: AuthService,
+    private readonly s3Service: S3Service,
     @InjectModel('Chat') private chatModel: Model<ChatDocument>,
   ) {}
 
@@ -27,12 +29,21 @@ export class ChatService {
   }
 
   async create(chatDto: ChatDto, user: User) {
-    const newMessage = new this.chatModel({
+    const newChat = new this.chatModel({
       message: chatDto.message,
       user,
     });
 
-    return await newMessage.save();
+    if (chatDto.attachment) {
+      const { url, error } = await this.s3Service.upload(
+        chatDto.attachment,
+        `${Date.now()}-${chatDto.message}`,
+      );
+      if (error) throw new WsException('Upload failed!');
+      newChat.attachmentUrl = url;
+    }
+
+    return await newChat.save();
   }
 
   findAll() {

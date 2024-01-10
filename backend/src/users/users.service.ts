@@ -1,69 +1,18 @@
-import {
-  DeleteObjectCommand,
-  PutObjectCommand,
-  S3Client,
-} from '@aws-sdk/client-s3';
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import * as bcrypt from 'bcrypt';
 import { Model } from 'mongoose';
+import { S3Service } from 'src/s3/s3.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { User } from './user.schema';
+import { User } from './schemas/user.schema';
 
 @Injectable()
 export class UsersService {
-  constructor(@InjectModel('User') private readonly userModel: Model<User>) {}
-
-  s3 = new S3Client({
-    region: process.env.AWS_CREDENTIAL_REGION,
-    credentials: {
-      accessKeyId: process.env.AWS_CREDENTIAL_ACCESS_KEY_ID as string,
-      secretAccessKey: process.env.AWS_CREDENTIAL_SECRET_ACCESS_KEY as string,
-    },
-  });
-
-  private async uploadFile(file: Express.Multer.File, Key: string) {
-    if (!file.size) return { error: 'File is empty!' };
-
-    try {
-      const res = await this.s3.send(
-        new PutObjectCommand({
-          Bucket: process.env.AWS_CREDENTIAL_S3_BUCKET,
-          Key,
-          Body: file.buffer,
-        }),
-      );
-      if (res.$metadata.httpStatusCode !== 200)
-        throw new Error('Upload failed!');
-
-      return {
-        url: `https://${process.env.AWS_CREDENTIAL_S3_BUCKET}.s3.${process.env.AWS_CREDENTIAL_REGION}.amazonaws.com/${Key}`,
-      };
-    } catch (error) {
-      console.error(error);
-      return { error };
-    }
-  }
-
-  private async deleteFile(Key: string) {
-    try {
-      const res = await this.s3.send(
-        new DeleteObjectCommand({
-          Bucket: process.env.AWS_CREDENTIAL_S3_BUCKET,
-          Key,
-        }),
-      );
-      if (
-        res.$metadata.httpStatusCode > 299 &&
-        res.$metadata.httpStatusCode < 200
-      )
-        throw new Error('Delete failed!');
-    } catch (error) {
-      console.error(error);
-      return error;
-    }
-  }
+  constructor(
+    @InjectModel('User') private readonly userModel: Model<User>,
+    private readonly s3Service: S3Service,
+  ) {}
 
   async create(createUserDto: CreateUserDto, avatar?: Express.Multer.File) {
     const newUser = new this.userModel(createUserDto);
@@ -72,8 +21,8 @@ export class UsersService {
 
     if (!avatar) return await newUser.save();
 
-    const { error, url } = await this.uploadFile(
-      avatar,
+    const { error, url } = await this.s3Service.upload(
+      avatar.buffer,
       `youapp-assessment/users/${newUser.id}/avatar`,
     );
     if (error) throw InternalServerErrorException;
@@ -111,8 +60,8 @@ export class UsersService {
       });
     }
 
-    const { error, url } = await this.uploadFile(
-      avatar,
+    const { error, url } = await this.s3Service.upload(
+      avatar.buffer,
       `youapp-assessment/users/${id}/avatar`,
     );
     if (error) return { message: 'Error when uploading avatar file!' };
@@ -125,7 +74,9 @@ export class UsersService {
   }
 
   async remove(id: string) {
-    const error = await this.deleteFile(`youapp-assessment/users/${id}/avatar`);
+    const error = await this.s3Service.delete(
+      `youapp-assessment/users/${id}/avatar`,
+    );
     if (error) throw InternalServerErrorException;
 
     return await this.userModel.findByIdAndDelete(id);
