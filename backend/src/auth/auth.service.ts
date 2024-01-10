@@ -15,6 +15,8 @@ export class AuthService {
     const user = await this.usersService.findOne({
       $or: [{ name: credential }, { email: credential }],
     });
+    if (!user) throw new UnauthorizedException();
+
     const isMatched = await bcrypt.compare(password, user.password);
     if (!isMatched) throw new UnauthorizedException();
 

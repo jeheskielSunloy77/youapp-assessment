@@ -90,7 +90,7 @@ export class UsersService {
     if (typeof params === 'string')
       return await this.userModel.findById(params).exec();
 
-    return await this.userModel.findOne().exec();
+    return await this.userModel.findOne(params).exec();
   }
 
   async exists(params: Parameters<typeof this.userModel.exists>[0]) {
