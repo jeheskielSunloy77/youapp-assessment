@@ -1,7 +1,7 @@
 import Button from '@/components/buttons/button/Button'
 import Navbar from '@/components/layout/navbar/Navbar'
-import { getUser, updateUserIntrest } from '@/libs/actions'
-import InputTags from '../../components/inputs/input-tags/InputTags'
+import { getUser } from '@/libs/actions'
+import UpdateInterestsForm from './_shared/components/update-interests-form/UpdateInterestsForm'
 
 export default async function UpdateIntrest() {
 	const user = await getUser()
@@ -25,9 +25,7 @@ export default async function UpdateIntrest() {
 							What interest you?
 						</h1>
 					</div>
-					<form id='update-intrest' action={updateUserIntrest}>
-						<InputTags tags={user?.intrests} name='intrests' />
-					</form>
+					<UpdateInterestsForm interests={user.interests} />
 				</div>
 			</main>
 		</>

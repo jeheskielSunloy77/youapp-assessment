@@ -3,4 +3,5 @@ interface BaseInputProps {
 	containerClassName?: string
 	label?: string
 	labelClassName?: string
+	errorClassName?: string
 }

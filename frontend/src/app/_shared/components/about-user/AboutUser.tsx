@@ -1,6 +1,7 @@
 'use client'
 import ButtonIcon from '@/components/buttons/button-icon/ButtonIcon'
 import Icon from '@/components/icon/Icon'
+import InputSelect from '@/components/inputs/input-select/InputSelect'
 import InputText, {
 	InputTextProps,
 } from '@/components/inputs/input-text/InputText'
@@ -13,7 +14,7 @@ import Image from 'next/image'
 import { Dispatch, SetStateAction, useState } from 'react'
 import toast from 'react-hot-toast'
 
-export default function AboutUser(props: { user: User }) {
+export default function AboutUser(props: { user: Partial<User> }) {
 	const [isEditing, setIsEditing] = useState(false)
 
 	return (
@@ -55,7 +56,9 @@ export default function AboutUser(props: { user: User }) {
 }
 
 function UserInfo(props: {
-	bio: Pick<User, 'birthday' | 'horoscope' | 'weight' | 'height' | 'zodiac'>
+	bio: Partial<
+		Pick<User, 'birthday' | 'horoscope' | 'weight' | 'height' | 'zodiac'>
+	>
 }) {
 	if (!Object.values(props.bio).some((val) => val))
 		return (
@@ -93,7 +96,7 @@ function UserInfo(props: {
 }
 
 function EditForm(props: {
-	user: User
+	user: Partial<User>
 	setIsEditing: Dispatch<SetStateAction<boolean>>
 }) {
 	const [errors, setErrors] = useState<ValidationError['errors'] | null>(null)
@@ -125,99 +128,98 @@ function EditForm(props: {
 	const zodiac = birthday ? zodiacs[new Date(birthday).getMonth()] : null
 	return (
 		<form id='about-user' className='space-y-2' action={handleSubmit}>
-			<ImageInput />
-			<InputText
-				className='w-2/3 border dark:border-gray-600 bg-gray-50 text-gray-900 opacity-80 dark:opacity-80 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 text-end read-only:text-gray-400'
-				labelClassName='text-xs text-gray-600 dark:text-gray-400'
-				containerClassName='flex items-center justify-between'
-				label='Display Name'
-				name='name'
-				placeholder='Enter Name'
-				defaultValue={props.user.name}
-				minLength={3}
-				error={errors?.find((err) => err.property === 'name')?.message}
+			<ImageInput
+				imageUrl={props.user.avatarUrl}
+				error={errors?.find((err) => err.property === 'avatar')?.message}
 			/>
-			<SelectGender />
-			<InputText
-				className='w-2/3 border dark:border-gray-600 bg-gray-50 text-gray-900 opacity-80 dark:opacity-80 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 text-end read-only:text-gray-400'
-				labelClassName='text-xs text-gray-600 dark:text-gray-400'
-				containerClassName='flex items-center justify-between'
-				label='Birthday'
-				name='birthday'
-				type='date'
-				value={birthday}
-				onChange={(e) => setBirthday(e.target.value)}
-				max={dayjs().format('YYYY-MM-DD')}
-				error={errors?.find((err) => err.property === 'birthday')?.message}
-			/>
-			<InputText
-				className='w-2/3 border dark:border-gray-600 bg-gray-50 text-gray-900 opacity-80 dark:opacity-80 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 text-end read-only:text-gray-400'
-				labelClassName='text-xs text-gray-600 dark:text-gray-400'
-				containerClassName='flex items-center justify-between'
-				label='Horoscope'
-				name='horoscope'
-				readOnly
-				placeholder='--'
-				value={zodiac?.horoscope || ''}
-				defaultValue={props.user.horoscope}
-				error={errors?.find((err) => err.property === 'horoscope')?.message}
-			/>
-			<InputText
-				className='w-2/3 border dark:border-gray-600 bg-gray-50 text-gray-900 opacity-80 dark:opacity-80 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 text-end read-only:text-gray-400'
-				labelClassName='text-xs text-gray-600 dark:text-gray-400'
-				containerClassName='flex items-center justify-between'
-				label='Zodiac'
-				name='zodiac'
-				readOnly
-				placeholder='--'
-				value={zodiac?.zodiac || ''}
-				defaultValue={props.user.zodiac}
-				error={errors?.find((err) => err.property === 'zodiac')?.message}
-			/>
-			<InputWithUnit
-				label='Height'
-				name='height'
-				unit='cm'
-				placeholder='Add Height'
-				defaultValue={props.user.height}
-				min={40}
-				max={300}
-				error={errors?.find((err) => err.property === 'height')?.message}
-			/>
-			<InputWithUnit
-				label='Weight'
-				name='weight'
-				unit='kg'
-				placeholder='Add Weight'
-				defaultValue={props.user.weight}
-				min={10}
-				max={300}
-				error={errors?.find((err) => err.property === 'weight')?.message}
-			/>
+			<div className='space-y-4'>
+				<InputText
+					className='w-2/3 border dark:border-gray-600 bg-gray-50 text-gray-900 opacity-80 dark:opacity-80 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 text-end read-only:text-gray-400'
+					labelClassName='text-xs text-gray-600 dark:text-gray-400'
+					containerClassName='flex items-center justify-between'
+					errorClassName='text-xs text-red-500 text-end'
+					label='Display Name'
+					name='name'
+					placeholder='Enter Name'
+					defaultValue={props.user.name}
+					minLength={3}
+					error={errors?.find((err) => err.property === 'name')?.message}
+				/>
+				<InputSelect
+					className='w-2/3 border dark:border-gray-600 bg-gray-50 text-gray-900 opacity-80 dark:opacity-80 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 text-end disabled:text-gray-500 '
+					labelClassName='text-xs text-gray-600 dark:text-gray-400'
+					containerClassName='flex items-center justify-between'
+					errorClassName='text-xs text-red-500 text-end'
+					label='Gender'
+					name='gender'
+					placeholder='Select Gender'
+					options={[
+						{ label: 'Male', value: 'Male' },
+						{ label: 'Female', value: 'Female' },
+					]}
+					error={errors?.find((err) => err.property === 'gender')?.message}
+				/>
+				<InputText
+					className='w-2/3 border dark:border-gray-600 bg-gray-50 text-gray-900 opacity-80 dark:opacity-80 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 text-end read-only:text-gray-400'
+					labelClassName='text-xs text-gray-600 dark:text-gray-400'
+					containerClassName='flex items-center justify-between'
+					errorClassName='text-xs text-red-500 text-end'
+					label='Birthday'
+					name='birthday'
+					type='date'
+					value={birthday}
+					onChange={(e) => setBirthday(e.target.value)}
+					max={dayjs().format('YYYY-MM-DD')}
+					error={errors?.find((err) => err.property === 'birthday')?.message}
+				/>
+				<InputText
+					className='w-2/3 border dark:border-gray-600 bg-gray-50 text-gray-900 opacity-80 dark:opacity-80 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 text-end read-only:text-gray-400'
+					labelClassName='text-xs text-gray-600 dark:text-gray-400'
+					containerClassName='flex items-center justify-between'
+					errorClassName='text-xs text-red-500 text-end'
+					label='Horoscope'
+					name='horoscope'
+					readOnly
+					placeholder='--'
+					value={zodiac?.horoscope || ''}
+					defaultValue={props.user.horoscope}
+					error={errors?.find((err) => err.property === 'horoscope')?.message}
+				/>
+				<InputText
+					className='w-2/3 border dark:border-gray-600 bg-gray-50 text-gray-900 opacity-80 dark:opacity-80 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 text-end read-only:text-gray-400'
+					labelClassName='text-xs text-gray-600 dark:text-gray-400'
+					containerClassName='flex items-center justify-between'
+					errorClassName='text-xs text-red-500 text-end'
+					label='Zodiac'
+					name='zodiac'
+					readOnly
+					placeholder='--'
+					value={zodiac?.zodiac || ''}
+					defaultValue={props.user.zodiac}
+					error={errors?.find((err) => err.property === 'zodiac')?.message}
+				/>
+				<InputWithUnit
+					label='Height'
+					name='height'
+					unit='cm'
+					placeholder='Add Height'
+					defaultValue={props.user.height}
+					min={40}
+					max={300}
+					error={errors?.find((err) => err.property === 'height')?.message}
+				/>
+				<InputWithUnit
+					label='Weight'
+					name='weight'
+					unit='kg'
+					placeholder='Add Weight'
+					defaultValue={props.user.weight}
+					min={10}
+					max={300}
+					error={errors?.find((err) => err.property === 'weight')?.message}
+				/>
+			</div>
 		</form>
-	)
-}
-
-function SelectGender(props: { defaultValue?: string; error?: string }) {
-	return (
-		<div className='flex items-center justify-between'>
-			<label htmlFor='gender' className='text-xs text-gray-600 dark:text-gray-400'>
-				Gender:
-			</label>
-			<select
-				id='gender'
-				name='gender'
-				className='w-2/3 border dark:border-gray-600 bg-gray-50 text-gray-900 opacity-80 dark:opacity-80 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 text-end disabled:text-gray-500 '
-				defaultValue={props.defaultValue}
-			>
-				<option value='' disabled selected>
-					Select Gender
-				</option>
-				<option value='Male'>Male</option>
-				<option value='Female'>Female</option>
-			</select>
-			{props.error && <p className='text-xs text-red-500'>{props.error}</p>}
-		</div>
 	)
 }
 
@@ -225,27 +227,28 @@ function InputWithUnit(props: InputTextProps & { unit: string }) {
 	const [isFilled, setIsFiled] = useState(!!props.defaultValue)
 
 	return (
-		<div className='relative'>
-			<InputText
-				className={`w-2/3 border dark:border-gray-600 bg-gray-50 text-gray-900 opacity-80 dark:opacity-80 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 text-end read-only:text-gray-400 ${
-					isFilled ? 'pr-10' : ''
-				}`}
-				labelClassName='text-xs text-gray-600 dark:text-gray-400'
-				containerClassName='flex items-center justify-between relative'
-				onChange={(e) => setIsFiled(!!e.target.value)}
-				type='number'
-				{...props}
-			/>
-			{isFilled && (
-				<span className='absolute top-1/2 right-4 transform -translate-y-1/2 text-gray-600 dark:text-gray-400 text-sm'>
-					{props.unit}
-				</span>
-			)}
-		</div>
+		<InputText
+			className={`w-2/3 border dark:border-gray-600 bg-gray-50 text-gray-900 opacity-80 dark:opacity-80 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 text-end read-only:text-gray-400 ${
+				isFilled ? 'pr-10' : ''
+			}`}
+			labelClassName='text-xs text-gray-600 dark:text-gray-400'
+			containerClassName='flex items-center justify-between relative'
+			onChange={(e) => setIsFiled(!!e.target.value)}
+			type='number'
+			errorClassName='text-xs text-red-500 text-end'
+			icon={
+				isFilled && (
+					<span className='absolute top-1/2 right-4 transform -translate-y-1/2 text-gray-600 dark:text-gray-400 text-sm'>
+						{props.unit}
+					</span>
+				)
+			}
+			{...props}
+		/>
 	)
 }
 
-function ImageInput(props: { imageUrl?: string }) {
+function ImageInput(props: { imageUrl?: string; error?: string }) {
 	const [imageUrl, setImageUrl] = useState(props.imageUrl)
 
 	return (
@@ -266,9 +269,12 @@ function ImageInput(props: { imageUrl?: string }) {
 					<div className='mt-1'>+</div>
 				</div>
 			)}
-			<span className='text-gray-800 dark:text-gray-100 text-sm group-hover:underline font-medium'>
-				{imageUrl ? 'Change' : 'Add'} Profile Image
-			</span>
+			<div>
+				<span className='text-gray-800 dark:text-gray-100 text-sm group-hover:underline font-medium'>
+					{imageUrl ? 'Change' : 'Add'} Profile Image
+				</span>
+				{props.error && <p className='text-xs text-red-500'>{props.error}</p>}
+			</div>
 			<input
 				id='image-input'
 				type='file'

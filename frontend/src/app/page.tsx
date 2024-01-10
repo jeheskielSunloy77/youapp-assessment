@@ -23,16 +23,12 @@ export default async function Home() {
 					<div
 						style={
 							user.avatarUrl
-								? {
-										backgroundImage: `url(${user.avatarUrl})`,
-										backgroundSize: 'cover',
-										backgroundPosition: 'center',
-								  }
+								? { backgroundImage: `url(${user.avatarUrl}?c=${Date.now()})` }
 								: undefined
 						}
-						className='flex items-start justify-end flex-col bg-gray-100 dark:bg-gray-800 rounded-lg h-60 p-2 gap-2'
+						className='bg-center bg-cover flex items-start justify-end flex-col bg-gray-100 dark:bg-gray-800 rounded-lg h-60 p-2 gap-2'
 					>
-						<div>
+						<div className='mix-blend-difference'>
 							<h6 className='font-bold text-white'>
 								@{user.name}
 								{age && `, ${age}`}
@@ -71,7 +67,7 @@ export default async function Home() {
 							</Link>
 						</div>
 
-						<IntrestList intrests={user.intrests} />
+						<IntrestList interests={user.interests} />
 					</div>
 				</div>
 			</main>
@@ -79,8 +75,8 @@ export default async function Home() {
 	)
 }
 
-function IntrestList(props: { intrests?: string[] }) {
-	if (!props.intrests)
+function IntrestList(props: { interests?: string[] }) {
+	if (!props.interests)
 		return (
 			<p className='text-sm text-gray-700 dark:text-gray-400'>
 				Add in your interests to find better matches.
@@ -89,7 +85,7 @@ function IntrestList(props: { intrests?: string[] }) {
 
 	return (
 		<div className='flex items-center flex-wrap gap-4'>
-			{props.intrests.map((intrest) => (
+			{props.interests.map((intrest) => (
 				<div
 					key={intrest}
 					className='py-2 px-4 rounded-full bg-gray-700 text-black dark:text-white font-semibold'

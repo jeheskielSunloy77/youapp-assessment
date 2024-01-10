@@ -24,11 +24,14 @@ import { UsersService } from './users.service';
 
 const avatarFilePipe = new ParseFilePipe({
   fileIsRequired: false,
+  exceptionFactory: (error) =>
+    new BadRequestException([{ property: 'avatar', message: error }]),
   validators: [
-    new MaxFileSizeValidator({ maxSize: 1024 * 1024 * 1 }),
-    new FileTypeValidator({
-      fileType: /image\/(jpg|png|jpeg|webp)/,
+    new MaxFileSizeValidator({
+      maxSize: 1024 * 1024 * 1,
+      message: 'File size must be less than 1MB',
     }),
+    new FileTypeValidator({ fileType: /image\/(jpg|png|jpeg|webp)/ }),
   ],
 });
 

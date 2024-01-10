@@ -1,22 +1,32 @@
 interface Props
-	extends React.HTMLAttributes<HTMLSelectElement>,
-		BaseInputProps {}
+	extends React.SelectHTMLAttributes<HTMLSelectElement>,
+		BaseInputProps {
+	placeholder?: string
+	options: { label: string; value: string }[]
+}
 
 export default function InputSelect(props: Props) {
 	return (
-		<div className={props.containerClassName}>
-			{props.label && (
-				<label htmlFor={props.label} className={props.labelClassName}>
-					{props.label}
-				</label>
-			)}
-			<select id={props.label} {...props}>
-				<option value='' disabled selected>
-					Select Gender
-				</option>
-				<option value='Male'>Male</option>
-				<option value='Female'>Female</option>
-			</select>
+		<div className='space-y-0.5'>
+			<div className={props.containerClassName}>
+				{props.label && (
+					<label htmlFor={props.label} className={props.labelClassName}>
+						{props.label}
+					</label>
+				)}
+				<select id={props.label} {...props}>
+					{props.placeholder && (
+						<option value='' disabled selected>
+							{props.placeholder}
+						</option>
+					)}
+					{props.options.map((opt) => (
+						<option value={opt.value} key={opt.value}>
+							{opt.label}
+						</option>
+					))}
+				</select>
+			</div>
 			{props.error && (
 				<p className='text-xs text-red-500 absolute -bottom-4'>{props.error}</p>
 			)}

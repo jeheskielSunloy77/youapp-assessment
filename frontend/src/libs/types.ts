@@ -7,7 +7,7 @@ export interface User {
 	zodiac: Zodiac
 	horoscope: Horoscope
 	gender: Gender
-	intrests: string[]
+	interests: string[]
 	avatarUrl: string
 	_id: string
 }

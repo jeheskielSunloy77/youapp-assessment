@@ -25,7 +25,6 @@ export async function updateUser(formData: FormData) {
 				},
 			}
 		)
-
 		setPayload(res.data)
 	} catch (error) {
 		if (!(error instanceof AxiosError)) throw error
