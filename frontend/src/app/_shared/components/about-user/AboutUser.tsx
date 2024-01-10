@@ -1,17 +1,19 @@
 'use client'
 import ButtonIcon from '@/components/buttons/button-icon/ButtonIcon'
 import Icon from '@/components/icon/Icon'
-import { updateUserAbout } from '@/libs/actions'
+import InputText, {
+	InputTextProps,
+} from '@/components/inputs/input-text/InputText'
+import { updateUser } from '@/libs/actions'
 import { zodiacs } from '@/libs/constants'
+import { ValidationError } from '@/libs/errors'
 import { User } from '@/libs/types'
 import dayjs from 'dayjs'
 import Image from 'next/image'
 import { Dispatch, SetStateAction, useState } from 'react'
+import toast from 'react-hot-toast'
 
-interface AboutUserProps {
-	user: User | null
-}
-export default function AboutUser(props: AboutUserProps) {
+export default function AboutUser(props: { user: User }) {
 	const [isEditing, setIsEditing] = useState(false)
 
 	return (
@@ -38,14 +40,24 @@ export default function AboutUser(props: AboutUserProps) {
 			{isEditing ? (
 				<EditForm setIsEditing={setIsEditing} user={props.user} />
 			) : (
-				<UserInfo user={props.user} />
+				<UserInfo
+					bio={{
+						birthday: props.user.birthday,
+						horoscope: props.user.horoscope,
+						weight: props.user.weight,
+						height: props.user.height,
+						zodiac: props.user.zodiac,
+					}}
+				/>
 			)}
 		</div>
 	)
 }
 
-function UserInfo(props: AboutUserProps) {
-	if (!props.user)
+function UserInfo(props: {
+	bio: Pick<User, 'birthday' | 'horoscope' | 'weight' | 'height' | 'zodiac'>
+}) {
+	if (!Object.values(props.bio).some((val) => val))
 		return (
 			<p className='text-sm text-gray-700 dark:text-gray-400'>
 				Add in yours to help others know you better.
@@ -56,153 +68,175 @@ function UserInfo(props: AboutUserProps) {
 			<div className='space-y-2'>
 				<p className='text-black dark:text-white'>
 					<span className='text-gray-300 dark:text-gray-600'>Birthday: </span>
-					{dayjs(props.user.birthday).format('DD / MM / YYYY')} (Age
-					{dayjs().diff(props.user.birthday, 'year')})
+					{dayjs(props.bio.birthday).format('DD / MM / YYYY')} (Age
+					{dayjs().diff(props.bio.birthday, 'year')})
 				</p>
 				<p className='text-black dark:text-white'>
 					<span className='text-gray-300 dark:text-gray-600'>Horoscope: </span>
-					{props.user.horoscope}
+					{props.bio.horoscope}
 				</p>
 				<p className='text-black dark:text-white'>
 					<span className='text-gray-300 dark:text-gray-600'>Zodiac: </span>
-					{props.user.zodiac}
+					{props.bio.zodiac}
 				</p>
 				<p className='text-black dark:text-white'>
 					<span className='text-gray-300 dark:text-gray-600'>Height: </span>
-					{props.user.height}
+					{props.bio.height}
 				</p>
 				<p className='text-black dark:text-white'>
 					<span className='text-gray-300 dark:text-gray-600'>Weight: </span>
-					{props.user.weight}
+					{props.bio.weight}
 				</p>
 			</div>
 		</div>
 	)
 }
 
-function EditForm(
-	props: AboutUserProps & { setIsEditing: Dispatch<SetStateAction<boolean>> }
-) {
+function EditForm(props: {
+	user: User
+	setIsEditing: Dispatch<SetStateAction<boolean>>
+}) {
+	const [errors, setErrors] = useState<ValidationError['errors'] | null>(null)
 	const [birthday, setBirthday] = useState<string | undefined>(
-		props.user?.birthday?.toISOString().split('T')[0]
+		props.user.birthday?.toISOString().split('T')[0]
 	)
+
+	function handleSubmit(formData: FormData) {
+		const promise = updateUser(formData).then((err) => {
+			if (err) throw new ValidationError(err)
+		})
+
+		toast.promise(promise, {
+			loading: 'Updating data...',
+			success: () => {
+				props.setIsEditing(false)
+				return 'Data updated!'
+			},
+			error: (err) => {
+				if (err instanceof ValidationError) {
+					setErrors(err.errors)
+					return 'Invalid input!'
+				}
+				return 'Something went wrong!'
+			},
+		})
+	}
 
 	const zodiac = birthday ? zodiacs[new Date(birthday).getMonth()] : null
 	return (
-		<form
-			id='about-user'
-			className='space-y-2'
-			action={(formData) => {
-				updateUserAbout(formData)
-				props.setIsEditing(false)
-			}}
-		>
+		<form id='about-user' className='space-y-2' action={handleSubmit}>
 			<ImageInput />
-			<Input
+			<InputText
+				className='w-2/3 border dark:border-gray-600 bg-gray-50 text-gray-900 opacity-80 dark:opacity-80 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 text-end read-only:text-gray-400'
+				labelClassName='text-xs text-gray-600 dark:text-gray-400'
+				containerClassName='flex items-center justify-between'
 				label='Display Name'
 				name='name'
 				placeholder='Enter Name'
-				defaultValue={props.user?.name}
+				defaultValue={props.user.name}
+				minLength={3}
+				error={errors?.find((err) => err.property === 'name')?.message}
 			/>
-			<div className='flex items-center justify-between'>
-				<label
-					htmlFor='gender'
-					className='text-xs text-gray-600 dark:text-gray-400'
-				>
-					Gender:
-				</label>
-				<select
-					id='gender'
-					name='gender'
-					className='w-2/3 border dark:border-gray-600 bg-gray-50 text-gray-900 opacity-80 dark:opacity-80 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 text-end disabled:text-gray-500 '
-					defaultValue={props.user?.gender}
-				>
-					<option value='' disabled selected>
-						Select Gender
-					</option>
-					<option value='Male'>Male</option>
-					<option value='Female'>Female</option>
-				</select>
-			</div>
-			<Input
+			<SelectGender />
+			<InputText
+				className='w-2/3 border dark:border-gray-600 bg-gray-50 text-gray-900 opacity-80 dark:opacity-80 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 text-end read-only:text-gray-400'
+				labelClassName='text-xs text-gray-600 dark:text-gray-400'
+				containerClassName='flex items-center justify-between'
 				label='Birthday'
 				name='birthday'
 				type='date'
 				value={birthday}
 				onChange={(e) => setBirthday(e.target.value)}
+				max={dayjs().format('YYYY-MM-DD')}
+				error={errors?.find((err) => err.property === 'birthday')?.message}
 			/>
-			<Input
+			<InputText
+				className='w-2/3 border dark:border-gray-600 bg-gray-50 text-gray-900 opacity-80 dark:opacity-80 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 text-end read-only:text-gray-400'
+				labelClassName='text-xs text-gray-600 dark:text-gray-400'
+				containerClassName='flex items-center justify-between'
 				label='Horoscope'
 				name='horoscope'
 				readOnly
 				placeholder='--'
 				value={zodiac?.horoscope || ''}
-				defaultValue={props.user?.horoscope}
+				defaultValue={props.user.horoscope}
+				error={errors?.find((err) => err.property === 'horoscope')?.message}
 			/>
-			<Input
+			<InputText
+				className='w-2/3 border dark:border-gray-600 bg-gray-50 text-gray-900 opacity-80 dark:opacity-80 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 text-end read-only:text-gray-400'
+				labelClassName='text-xs text-gray-600 dark:text-gray-400'
+				containerClassName='flex items-center justify-between'
 				label='Zodiac'
 				name='zodiac'
 				readOnly
 				placeholder='--'
 				value={zodiac?.zodiac || ''}
-				defaultValue={props.user?.zodiac}
+				defaultValue={props.user.zodiac}
+				error={errors?.find((err) => err.property === 'zodiac')?.message}
 			/>
 			<InputWithUnit
 				label='Height'
 				name='height'
 				unit='cm'
 				placeholder='Add Height'
-				type='number'
-				defaultValue={props.user?.height}
+				defaultValue={props.user.height}
+				min={40}
+				max={300}
+				error={errors?.find((err) => err.property === 'height')?.message}
 			/>
 			<InputWithUnit
 				label='Weight'
 				name='weight'
 				unit='kg'
 				placeholder='Add Weight'
-				type='number'
-				defaultValue={props.user?.weight}
+				defaultValue={props.user.weight}
+				min={10}
+				max={300}
+				error={errors?.find((err) => err.property === 'weight')?.message}
 			/>
 		</form>
 	)
 }
 
-interface InputProps
-	extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'name'> {
-	label: string
-	name: string
-}
-function Input(props: InputProps) {
+function SelectGender(props: { defaultValue?: string; error?: string }) {
 	return (
 		<div className='flex items-center justify-between'>
-			<label
-				htmlFor={props.name}
-				className='text-xs text-gray-600 dark:text-gray-400'
-			>
-				{props.label}:
+			<label htmlFor='gender' className='text-xs text-gray-600 dark:text-gray-400'>
+				Gender:
 			</label>
-			<input
-				id={props.name}
-				{...props}
-				className={`w-2/3 border dark:border-gray-600 bg-gray-50 text-gray-900 opacity-80 dark:opacity-80 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 text-end read-only:text-gray-400 ${props.className}`}
-				required
-			/>
+			<select
+				id='gender'
+				name='gender'
+				className='w-2/3 border dark:border-gray-600 bg-gray-50 text-gray-900 opacity-80 dark:opacity-80 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 text-end disabled:text-gray-500 '
+				defaultValue={props.defaultValue}
+			>
+				<option value='' disabled selected>
+					Select Gender
+				</option>
+				<option value='Male'>Male</option>
+				<option value='Female'>Female</option>
+			</select>
+			{props.error && <p className='text-xs text-red-500'>{props.error}</p>}
 		</div>
 	)
 }
 
-function InputWithUnit(props: InputProps & { unit: string }) {
-	const [value, setValue] = useState(props.defaultValue || '')
+function InputWithUnit(props: InputTextProps & { unit: string }) {
+	const [isFilled, setIsFiled] = useState(!!props.defaultValue)
 
 	return (
 		<div className='relative'>
-			<Input
+			<InputText
+				className={`w-2/3 border dark:border-gray-600 bg-gray-50 text-gray-900 opacity-80 dark:opacity-80 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 text-end read-only:text-gray-400 ${
+					isFilled ? 'pr-10' : ''
+				}`}
+				labelClassName='text-xs text-gray-600 dark:text-gray-400'
+				containerClassName='flex items-center justify-between relative'
+				onChange={(e) => setIsFiled(!!e.target.value)}
+				type='number'
 				{...props}
-				value={value}
-				onChange={(e) => setValue(e.target.value)}
-				className={value ? 'pr-10' : undefined}
 			/>
-			{value && (
+			{isFilled && (
 				<span className='absolute top-1/2 right-4 transform -translate-y-1/2 text-gray-600 dark:text-gray-400 text-sm'>
 					{props.unit}
 				</span>
@@ -235,14 +269,12 @@ function ImageInput(props: { imageUrl?: string }) {
 			<span className='text-gray-800 dark:text-gray-100 text-sm group-hover:underline font-medium'>
 				{imageUrl ? 'Change' : 'Add'} Profile Image
 			</span>
-
 			<input
 				id='image-input'
 				type='file'
-				name='profileImage'
-				accept='image/png, image/jpeg, image/jpg'
+				name='avatar'
+				accept='image/png, image/jpeg, image/jpg, image/webp'
 				className='sr-only'
-				required={true}
 				onChange={(e) => {
 					const file = e.target.files?.item(0)
 					file && setImageUrl(URL.createObjectURL(file))

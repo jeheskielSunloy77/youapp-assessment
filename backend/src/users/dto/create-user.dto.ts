@@ -1,18 +1,19 @@
+import { Type } from 'class-transformer';
 import {
   ArrayMinSize,
   IsArray,
   IsDate,
   IsEmail,
   IsEnum,
-  IsInt,
   IsNotEmpty,
-  IsOptional,
+  IsNumber,
   IsString,
   IsStrongPassword,
   Max,
+  MaxDate,
   Min,
-  MinDate,
   MinLength,
+  ValidateIf,
 } from 'class-validator';
 import { Gender, Genders, Horoscopes, Zodiac, Zodiacs } from 'src/libs/types';
 import { IsPasswordConf } from './validators/is-password-conf';
@@ -41,38 +42,45 @@ export class CreateUserDto {
   @IsPasswordConf()
   passwordConf: string;
 
-  @IsOptional()
+  @ValidateIf(isTruthy)
+  @Type(() => Date)
   @IsDate()
-  @MinDate(new Date(), { message: 'Birthday must be in the past' })
+  @MaxDate(new Date(), { message: 'Birthday must be in the past' })
   birthday: Date;
 
-  @IsOptional()
-  @IsInt()
+  @ValidateIf(isTruthy)
+  @IsNumber()
+  @Type(() => Number)
   @Min(10, { message: 'Weight must be at least 10kg' })
   @Max(300, { message: 'Weight must be at most 300kg' })
   weight: number;
 
-  @IsOptional()
-  @IsInt()
+  @ValidateIf(isTruthy)
+  @IsNumber()
+  @Type(() => Number)
   @Min(40, { message: 'Height must be at least 40cm' })
   @Max(300, { message: 'Height must be at most 300cm' })
   height: number;
 
-  @IsOptional()
+  @ValidateIf(isTruthy)
   @IsEnum(Zodiacs)
   zodiac: Zodiac;
 
-  @IsOptional()
+  @ValidateIf(isTruthy)
   @IsEnum(Horoscopes)
   horoscope: string;
 
-  @IsOptional()
+  @ValidateIf(isTruthy)
   @IsEnum(Genders)
   gender: Gender;
 
-  @IsOptional()
+  @ValidateIf(isTruthy)
   @IsArray()
   @IsString({ each: true })
   @ArrayMinSize(1)
   interests: string[];
+}
+
+function isTruthy(_: unknown, value: unknown) {
+  return value !== null && value !== undefined && value !== '';
 }

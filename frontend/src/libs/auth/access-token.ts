@@ -35,9 +35,10 @@ const baseOptions = {
 	path: '/',
 } as ResponseCookie
 
-export function parseToken() {
-	const token = cookies().get('token')?.value
+export function parseToken(token?: string) {
+	if (!token) token = cookies().get('token')?.value
 	if (!token) return null
+
 	try {
 		const payload = jwt.verify(
 			token,

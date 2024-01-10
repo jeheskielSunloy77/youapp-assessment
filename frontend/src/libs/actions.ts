@@ -3,42 +3,36 @@
 import axios, { AxiosError } from 'axios'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
-import { setPayload, setToken } from './auth/access-token'
+import { parseToken, setPayload, setToken } from './auth/access-token'
 import { HTTPStatusText, User, ValidationError } from './types'
 
-export async function updateUserAbout(formData: FormData) {
+export async function updateUser(formData: FormData) {
+	const token = cookies().get('token')?.value
+	const user = parseToken(token)
+	if (!user) return redirect('/login')
+
+	const avatar = formData.get('avatar')
+	if (avatar instanceof File && !avatar.size) formData.delete('avatar')
+
 	try {
-		const res = await axios.patch('http://localhost:8080/users', formData, {
-			headers: { 'Content-Type': 'multipart/form-data' },
-		})
+		const res = await axios.patch(
+			`http://localhost:8080/users/${user._id}`,
+			formData,
+			{
+				headers: {
+					'Content-Type': 'multipart/form-data',
+					Authorization: `Bearer ${token}`,
+				},
+			}
+		)
+
 		setPayload(res.data)
 	} catch (error) {
 		if (!(error instanceof AxiosError)) throw error
-
 		if (checkStatus('Client error', error.response?.status)) {
 			return error.response?.data.message as ValidationError[]
 		}
 	}
-}
-
-export async function updateUserIntrest(formData: FormData) {
-	const store = cookies()
-	const userCookie = store.get('user')?.value
-	const oldUser: User = userCookie ? JSON.parse(userCookie) : null
-	const user: User = {
-		...oldUser,
-		intrests: formData.getAll('intrests') as string[],
-	}
-	store.set('user', JSON.stringify(user))
-	redirect('/')
-}
-
-export async function getUser() {
-	const userCookie = cookies().get('user')
-	if (!userCookie) return null
-	let user: User = JSON.parse(userCookie.value)
-	user.birthday = new Date(user.birthday)
-	return user
 }
 
 export async function login(data: { credential: string; password: string }) {
@@ -87,4 +81,22 @@ function checkStatus(text: HTTPStatusText, code?: number) {
 		default:
 			return false
 	}
+}
+
+export async function getUser() {
+	const token = cookies().get('token')?.value
+	const userPayload = parseToken(token)
+	if (!userPayload) redirect('/login')
+
+	const user: User = await axios
+		.get(`http://localhost:8080/users/${userPayload._id}`, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		})
+		.then((res) => res.data)
+
+	if (user.birthday) user.birthday = new Date(user.birthday)
+
+	return user
 }

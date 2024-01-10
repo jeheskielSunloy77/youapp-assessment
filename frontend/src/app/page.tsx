@@ -2,13 +2,15 @@ import ButtonIcon from '@/components/buttons/button-icon/ButtonIcon'
 import Icon, { IconName } from '@/components/icon/Icon'
 import Navbar from '@/components/layout/navbar/Navbar'
 import { getUser } from '@/libs/actions'
-import { User } from '@/libs/types'
 import dayjs from 'dayjs'
 import Link from 'next/link'
+import { redirect } from 'next/navigation'
 import AboutUser from './_shared/components/about-user/AboutUser'
 
 export default async function Home() {
-	const user = (await getUser()) || ({} as User)
+	const user = await getUser()
+	if (!user) return redirect('/login')
+
 	const age = user.birthday
 		? dayjs().diff(dayjs(user.birthday), 'year').toString()
 		: null
@@ -19,11 +21,15 @@ export default async function Home() {
 				<Navbar username={`@${user.name}`} />
 				<div className='space-y-4 px-4'>
 					<div
-						style={{
-							backgroundImage: `url(https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)`,
-							backgroundSize: 'cover',
-							backgroundPosition: 'center',
-						}}
+						style={
+							user.avatarUrl
+								? {
+										backgroundImage: `url(${user.avatarUrl})`,
+										backgroundSize: 'cover',
+										backgroundPosition: 'center',
+								  }
+								: undefined
+						}
 						className='flex items-start justify-end flex-col bg-gray-100 dark:bg-gray-800 rounded-lg h-60 p-2 gap-2'
 					>
 						<div>
@@ -31,21 +37,25 @@ export default async function Home() {
 								@{user.name}
 								{age && `, ${age}`}
 							</h6>
-							<span className='text-sm text-white font-medium'>{user.gender}</span>
+							{user.gender && (
+								<span className='text-sm text-white font-medium'>{user.gender}</span>
+							)}
 						</div>
-						<div className='flex items-center gap-4 text-white font-semibold text-xs'>
-							<div className='p-2 rounded-full bg-gray-700 flex items-center gap-4'>
-								<Icon
-									name={`zodiac-${user.zodiac.toLowerCase()}` as IconName}
-									className='w-4 h-4 sm:w-6 sm:h-6'
-								/>
-								{user.zodiac}
+						{user.zodiac && user.horoscope && (
+							<div className='flex items-center gap-4 text-white font-semibold text-xs'>
+								<div className='p-2 rounded-full bg-gray-700 flex items-center gap-4'>
+									<Icon
+										name={`zodiac-${user.zodiac.toLowerCase()}` as IconName}
+										className='w-4 h-4 sm:w-6 sm:h-6'
+									/>
+									{user.zodiac}
+								</div>
+								<div className='p-2 rounded-full bg-gray-700 flex items-center gap-4'>
+									<Icon name='dog-side' className='w-4 h-4 sm:w-6 sm:h-6' />
+									{user.horoscope}
+								</div>
 							</div>
-							<div className='p-2 rounded-full bg-gray-700 flex items-center gap-4'>
-								<Icon name='dog-side' className='w-4 h-4 sm:w-6 sm:h-6' />
-								{user.horoscope}
-							</div>
-						</div>
+						)}
 					</div>
 					<AboutUser user={user} />
 					<div className='bg-gray-100 dark:bg-gray-800 rounded-lg p-4 space-y-4'>

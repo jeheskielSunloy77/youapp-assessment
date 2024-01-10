@@ -1,20 +1,25 @@
 'use client'
 import { ReactNode, useEffect, useState } from 'react'
 
-export interface TextInputProps
-	extends React.InputHTMLAttributes<HTMLInputElement> {
-	error?: string
+export interface InputTextProps
+	extends React.InputHTMLAttributes<HTMLInputElement>,
+		BaseInputProps {
 	icon?: ReactNode
-	containerClassName?: string
 }
-export function TextInput(props: TextInputProps) {
+export default function InputText(props: InputTextProps) {
 	const [error, setError] = useState(props.error)
 
 	useEffect(() => setError(props.error), [props.error])
 
 	return (
 		<div className={props.containerClassName}>
+			{props.label && (
+				<label htmlFor={props.label} className={props.labelClassName}>
+					{props.label}
+				</label>
+			)}
 			<input
+				id={props.label}
 				onChange={(e) => setError(e.currentTarget.validationMessage)}
 				{...props}
 			/>

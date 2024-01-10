@@ -1,6 +1,6 @@
 'use client'
-import PasswordInput from '@/components/inputs/password-input/PasswordInput'
-import { TextInput } from '@/components/inputs/text-input/TextInput'
+import InputPassword from '@/components/inputs/input-password/InputPassword'
+import InputText from '@/components/inputs/input-text/InputText'
 import { register } from '@/libs/actions'
 import { ValidationError } from '@/libs/errors'
 import { useRouter } from 'next/navigation'
@@ -40,7 +40,7 @@ export default function RegisterForm() {
 			onChange={(e) => setIsSubmitable(e.currentTarget.checkValidity())}
 			onSubmit={handleSubmit}
 		>
-			<TextInput
+			<InputText
 				className='input-primary'
 				error={errors?.find((err) => err.property === 'email')?.message}
 				name='email'
@@ -48,7 +48,7 @@ export default function RegisterForm() {
 				placeholder='Enter Email'
 				required
 			/>
-			<TextInput
+			<InputText
 				className='input-primary'
 				error={errors?.find((err) => err.property === 'name')?.message}
 				name='name'
@@ -56,7 +56,7 @@ export default function RegisterForm() {
 				minLength={3}
 				required
 			/>
-			<PasswordInput
+			<InputPassword
 				error={errors?.find((err) => err.property === 'password')?.message}
 				name='password'
 				placeholder='Create Password'
@@ -65,7 +65,7 @@ export default function RegisterForm() {
 				pattern='^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{8,}$'
 				required
 			/>
-			<PasswordInput
+			<InputPassword
 				error={errors?.find((err) => err.property === 'passwordConf')?.message}
 				name='passwordConf'
 				placeholder='Confirm Password'

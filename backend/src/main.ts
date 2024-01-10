@@ -14,6 +14,7 @@ async function bootstrap() {
   app.use(urlencoded({ extended: true, limit: '50mb' }));
   app.useGlobalPipes(
     new ValidationPipe({
+      transform: true,
       exceptionFactory: (errors) => {
         const result = errors.map((err) => ({
           property: err.property,
@@ -22,6 +23,7 @@ async function bootstrap() {
         return new BadRequestException(result);
       },
       stopAtFirstError: true,
+      whitelist: true,
     }),
   );
 

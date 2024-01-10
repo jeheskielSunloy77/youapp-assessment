@@ -1,12 +1,12 @@
 import Icon from '@/components/icon/Icon'
 import { useState } from 'react'
-import { TextInput, TextInputProps } from '../text-input/TextInput'
+import InputText, { InputTextProps } from '../input-text/InputText'
 
-export default function PasswordInput(props: TextInputProps) {
+export default function InputPassword(props: InputTextProps) {
 	const [isVisible, setIsVisible] = useState(false)
 
 	return (
-		<TextInput
+		<InputText
 			type={isVisible ? 'text' : 'password'}
 			containerClassName='relative'
 			icon={
