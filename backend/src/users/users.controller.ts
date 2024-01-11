@@ -25,7 +25,11 @@ import { UsersService } from './users.service';
 const avatarFilePipe = new ParseFilePipe({
   fileIsRequired: false,
   exceptionFactory: (error) =>
-    new BadRequestException([{ property: 'avatar', message: error }]),
+    new BadRequestException({
+      statusCode: 400,
+      message: { avatar: error },
+      error: 'Bad Request',
+    }),
   validators: [
     new MaxFileSizeValidator({
       maxSize: 1024 * 1024 * 3,

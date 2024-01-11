@@ -16,11 +16,19 @@ async function bootstrap() {
     new ValidationPipe({
       transform: true,
       exceptionFactory: (errors) => {
-        const result = errors.map((err) => ({
-          property: err.property,
-          message: err.constraints[Object.keys(err.constraints)[0]],
-        }));
-        return new BadRequestException(result);
+        const errorMessages = errors.reduce(
+          (acc, curr) => {
+            acc[curr.property] =
+              curr.constraints[Object.keys(curr.constraints)[0]];
+            return acc;
+          },
+          {} as Record<string, string>,
+        );
+        return new BadRequestException({
+          statusCode: 400,
+          message: errorMessages,
+          error: 'Bad Request',
+        });
       },
       stopAtFirstError: true,
       whitelist: true,
