@@ -1,15 +1,22 @@
 'use client'
+import { register } from '@/actions/auth'
 import InputPassword from '@/components/inputs/input-password/InputPassword'
 import InputText from '@/components/inputs/input-text/InputText'
-import { register } from '@/libs/actions'
-import { ValidationError } from '@/libs/errors'
+import { ValidationError, ValidationErrorType } from '@/libs/errors'
+import { User } from '@/libs/types'
 import { useRouter } from 'next/navigation'
 import { FormEvent, useState } from 'react'
 import toast from 'react-hot-toast'
 
+type FormField =
+	| keyof Pick<User, 'email' | 'name' | 'password'>
+	| 'passwordConf'
+
 export default function RegisterForm() {
 	const [isSubmittable, setIsSubmitable] = useState(false)
-	const [errors, setErrors] = useState<ValidationError['errors'] | null>(null)
+	const [errors, setErrors] = useState<ValidationErrorType<FormField> | null>(
+		null
+	)
 	const router = useRouter()
 
 	function handleSubmit(e: FormEvent<HTMLFormElement>) {
@@ -42,7 +49,7 @@ export default function RegisterForm() {
 		>
 			<InputText
 				className='input-primary'
-				error={errors?.find((err) => err.property === 'email')?.message}
+				error={errors?.email}
 				name='email'
 				type='email'
 				placeholder='Enter Email'
@@ -50,14 +57,14 @@ export default function RegisterForm() {
 			/>
 			<InputText
 				className='input-primary'
-				error={errors?.find((err) => err.property === 'name')?.message}
+				error={errors?.name}
 				name='name'
 				placeholder='Create Username'
 				minLength={3}
 				required
 			/>
 			<InputPassword
-				error={errors?.find((err) => err.property === 'password')?.message}
+				error={errors?.password}
 				name='password'
 				placeholder='Create Password'
 				className='input-primary'
@@ -66,7 +73,7 @@ export default function RegisterForm() {
 				required
 			/>
 			<InputPassword
-				error={errors?.find((err) => err.property === 'passwordConf')?.message}
+				error={errors?.passwordConf}
 				name='passwordConf'
 				placeholder='Confirm Password'
 				className='input-primary'

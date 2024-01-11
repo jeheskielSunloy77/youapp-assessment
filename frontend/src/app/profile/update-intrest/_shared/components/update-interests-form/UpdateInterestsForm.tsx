@@ -1,6 +1,6 @@
 'use client'
+import { updateUser } from '@/actions/user'
 import InputTags from '@/components/inputs/input-tags/InputTags'
-import { updateUser } from '@/libs/actions'
 import toast from 'react-hot-toast'
 
 export default function UpdateInterestsForm(props: { interests: string[] }) {
@@ -9,8 +9,8 @@ export default function UpdateInterestsForm(props: { interests: string[] }) {
 			id='update-intrest'
 			action={(formData) => {
 				toast.promise(updateUser(formData), {
-					loading: 'Updating...',
-					success: 'Updated!',
+					loading: 'Updating data...',
+					success: 'Data updated!',
 					error: 'Failed to update',
 				})
 			}}

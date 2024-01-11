@@ -6,29 +6,40 @@ interface Props
 }
 
 export default function InputSelect(props: Props) {
+	const {
+		error,
+		containerClassName,
+		label,
+		labelClassName,
+		errorClassName,
+		placeholder,
+		options,
+		...inputProps
+	} = props
+
 	return (
 		<div className='space-y-0.5'>
-			<div className={props.containerClassName}>
-				{props.label && (
-					<label htmlFor={props.label} className={props.labelClassName}>
-						{props.label}
+			<div className={containerClassName}>
+				{label && (
+					<label htmlFor={label} className={labelClassName}>
+						{label}
 					</label>
 				)}
-				<select id={props.label} {...props}>
-					{props.placeholder && (
-						<option value='' disabled selected>
-							{props.placeholder}
+				<select id={label} {...inputProps}>
+					{placeholder && (
+						<option value='' disabled className='dark:bg-gray-800'>
+							{placeholder}
 						</option>
 					)}
-					{props.options.map((opt) => (
-						<option value={opt.value} key={opt.value}>
+					{options.map((opt) => (
+						<option value={opt.value} key={opt.value} className='dark:bg-gray-800'>
 							{opt.label}
 						</option>
 					))}
 				</select>
 			</div>
-			{props.error && (
-				<p className='text-xs text-red-500 absolute -bottom-4'>{props.error}</p>
+			{error && (
+				<p className={errorClassName || 'text-xs text-red-600'}>{error}</p>
 			)}
 		</div>
 	)

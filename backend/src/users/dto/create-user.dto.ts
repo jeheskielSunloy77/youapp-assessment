@@ -17,7 +17,7 @@ import {
 } from 'class-validator';
 import { Gender, Genders, Horoscopes, Zodiac, Zodiacs } from 'src/libs/types';
 import { IsPasswordConf } from './validators/is-password-conf';
-import { IsUnique } from './validators/is-user-already';
+import { IsUnique } from './validators/is-unique';
 
 export class CreateUserDto {
   @IsNotEmpty()

@@ -4,6 +4,24 @@
 
 @layer components {
 	.input-primary {
-		@apply bg-gray-50 text-gray-900 opacity-80 dark:opacity-80 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500;
+		@apply bg-white text-gray-900 opacity-80 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-opacity-[0.06] dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500;
+	}
+	.background-light {
+		@apply bg-gray-100 dark:bg-[radial-gradient(121.73%_121.49%_at_100%_-3.39%,_#1F4247_0%,_#0D1D23_56.18%,_#09141A_100%)];
+	}
+	.background-dark {
+		@apply bg-white dark:bg-[rgba(9,_20,_26,_1)];
+	}
+	.button-ghost {
+		@apply inline-flex items-center text-sm hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:hover:bg-gray-700 dark:focus:ring-gray-600 rounded-md p-2;
+	}
+	.button-gradient {
+		@apply font-bold text-white bg-[linear-gradient(108.32deg,_#62CDCB_24.88%,_#4599DB_78.49%)] hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 disabled:opacity-60;
+	}
+	.text-gradient-gold {
+		@apply text-transparent bg-amber-400 dark:bg-[linear-gradient(74.08deg,_#94783E_-6.8%,_#F3EDA6_16.76%,_#F8FAE5_30.5%,_#FFE2BE_49.6%,_#D5BE88_78.56%,_#F8FAE5_89.01%,_#D5BE88_100.43%)] bg-clip-text;
+	}
+	.text-gradient-blue {
+		@apply text-transparent bg-[linear-gradient(134.86deg,_#ABFFFD_2.64%,_#4599DB_102.4%,_#AADAFF_102.4%)] bg-clip-text;
 	}
 }

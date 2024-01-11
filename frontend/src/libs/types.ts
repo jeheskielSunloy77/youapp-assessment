@@ -10,6 +10,7 @@ export interface User {
 	interests: string[]
 	avatarUrl: string
 	_id: string
+	password: string
 }
 
 export type Gender = 'Male' | 'Female'
@@ -27,11 +28,6 @@ export type Zodiac =
 	| 'Capricorn'
 	| 'Aquarius'
 	| 'Pisces'
-
-export interface ValidationError<T = string> {
-	property: T
-	message: string
-}
 
 export type Horoscope =
 	| 'Tiger'
@@ -53,3 +49,5 @@ export type HTTPStatusText =
 	| 'Redirection'
 	| 'Client error'
 	| 'Server error'
+
+export type Theme = 'light' | 'dark'

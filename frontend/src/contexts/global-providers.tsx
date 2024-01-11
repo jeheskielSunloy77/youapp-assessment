@@ -1,26 +1,34 @@
 'use client'
 import Icon from '@/components/icon/Icon'
+import { Theme } from '@/libs/types'
 import { ReactNode } from 'react'
 import toast, { ToastBar, Toaster } from 'react-hot-toast'
+import { AppContext, AppContextProvider } from './app-context/AppContext'
 
-export default function GlobalProviders(props: { children: ReactNode }) {
+export default function GlobalProviders(
+	props: AppContext & { children: ReactNode }
+) {
 	return (
 		<>
-			<AppToaster />
-			{props.children}
+			<AppToaster theme={props.theme} />
+			<AppContextProvider theme={props.theme}>{props.children}</AppContextProvider>
 		</>
 	)
 }
 
-function AppToaster() {
+function AppToaster(props: { theme: Theme }) {
+	const isDark = props.theme === 'dark'
 	return (
 		<Toaster
 			position='bottom-left'
+			containerClassName='hellocontainer'
 			toastOptions={{
-				className:
-					'bg-white dark:bg-gray-900 rounded-lg text-high border border-gray-200 dark:border-gray-800 dark:text-gray-200',
 				style: {
-					borderRadius: '0.125rem',
+					borderRadius: '0.375rem',
+					backgroundColor: isDark ? '#111827' : 'white',
+					borderWidth: '1px',
+					color: isDark ? '#f3f4f6' : '#1f2937',
+					borderColor: isDark ? '#374151' : '#D1D5DB',
 				},
 			}}
 		>

@@ -11,26 +11,37 @@ export default function InputText(props: InputTextProps) {
 
 	useEffect(() => setError(props.error), [props.error])
 
+	const {
+		error: _,
+		containerClassName,
+		label,
+		labelClassName,
+		errorClassName,
+		icon,
+		onChange,
+		...inputProps
+	} = props
+
 	return (
 		<div className='space-y-0.5'>
-			<div className={props.containerClassName}>
-				{props.label && (
-					<label htmlFor={props.label} className={props.labelClassName}>
-						{props.label}
+			<div className={containerClassName}>
+				{label && (
+					<label htmlFor={label} className={labelClassName}>
+						{label}
 					</label>
 				)}
 				<input
-					id={props.label}
-					{...props}
+					id={label}
+					{...inputProps}
 					onChange={(e) => {
 						setError(e.currentTarget.validationMessage)
-						props.onChange?.(e)
+						onChange?.(e)
 					}}
 				/>
-				{props.icon}
+				{icon}
 			</div>
 			{error && (
-				<p className={props.errorClassName || 'text-xs text-red-500'}>{error}</p>
+				<p className={errorClassName || 'text-xs text-red-600'}>{error}</p>
 			)}
 		</div>
 	)
