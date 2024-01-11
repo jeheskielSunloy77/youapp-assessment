@@ -18,7 +18,7 @@ export class IsUniqueConstraint implements ValidatorConstraintInterface {
 
     const existingUser = await this.userService.findOne({ [fieldName]: value });
 
-    if (existingUser.id === args.object['userId']) return true;
+    if (existingUser && existingUser.id === args.object['userId']) return true;
     return !existingUser;
   }
 
