@@ -62,6 +62,11 @@ export class ChatGateway {
     this.server.sockets.emit('receiveDeleteMessage', chat);
   }
 
+  @SubscribeMessage('ping')
+  async ping() {
+    this.server.sockets.emit('pong', 'Hello world! from websocket');
+  }
+
   private async checkUser(socket: Socket) {
     const user = await this.chatService.getUserFromSocket(socket);
     if (!user) throw new WsException('Invalid credentials.');

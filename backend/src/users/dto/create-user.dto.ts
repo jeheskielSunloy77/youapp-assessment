@@ -15,7 +15,7 @@ import {
   MinLength,
   ValidateIf,
 } from 'class-validator';
-import { Gender, Genders, Horoscopes, Zodiac, Zodiacs } from 'src/libs/types';
+import { Gender, Genders, Horoscopes, Zodiac, Zodiacs } from '../../libs/types';
 import { IsPasswordConf } from './validators/is-password-conf';
 import { IsUnique } from './validators/is-unique';
 
@@ -46,39 +46,39 @@ export class CreateUserDto {
   @Type(() => Date)
   @IsDate()
   @MaxDate(new Date(), { message: 'Birthday must be in the past' })
-  birthday: Date;
+  birthday?: Date;
 
   @ValidateIf(isTruthy)
   @IsNumber()
   @Type(() => Number)
   @Min(10, { message: 'Weight must be at least 10kg' })
   @Max(300, { message: 'Weight must be at most 300kg' })
-  weight: number;
+  weight?: number;
 
   @ValidateIf(isTruthy)
   @IsNumber()
   @Type(() => Number)
   @Min(40, { message: 'Height must be at least 40cm' })
   @Max(300, { message: 'Height must be at most 300cm' })
-  height: number;
+  height?: number;
 
   @ValidateIf(isTruthy)
   @IsEnum(Zodiacs)
-  zodiac: Zodiac;
+  zodiac?: Zodiac;
 
   @ValidateIf(isTruthy)
   @IsEnum(Horoscopes)
-  horoscope: string;
+  horoscope?: string;
 
   @ValidateIf(isTruthy)
   @IsEnum(Genders)
-  gender: Gender;
+  gender?: Gender;
 
   @ValidateIf(isTruthy)
   @IsArray()
   @IsString({ each: true })
   @ArrayMinSize(1)
-  interests: string[];
+  interests?: string[];
 }
 
 function isTruthy(_: unknown, value: unknown) {

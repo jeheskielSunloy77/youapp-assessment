@@ -2,7 +2,7 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import * as bcrypt from 'bcrypt';
 import { Model } from 'mongoose';
-import { S3Service } from 'src/s3/s3.service';
+import { S3Service } from '../s3/s3.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './schemas/user.schema';
@@ -15,20 +15,22 @@ export class UsersService {
   ) {}
 
   async create(createUserDto: CreateUserDto, avatar?: Express.Multer.File) {
-    const newUser = new this.userModel(createUserDto);
+    createUserDto.password = await bcrypt.hash(createUserDto.password, 10);
 
-    newUser.password = await bcrypt.hash(newUser.password, 10);
+    const newUser = await this.userModel.create(createUserDto);
 
-    if (!avatar) return await newUser.save();
+    if (!avatar) return newUser;
 
     const { error, url } = await this.s3Service.upload(
       avatar.buffer,
       `youapp-assessment/users/${newUser.id}/avatar`,
     );
-    if (error) throw InternalServerErrorException;
+    if (error) {
+      await newUser.deleteOne();
+      throw InternalServerErrorException;
+    }
 
-    newUser.avatarUrl = url;
-    return await newUser.save();
+    return newUser.updateOne({ avatarUrl: url });
   }
 
   async findAll() {

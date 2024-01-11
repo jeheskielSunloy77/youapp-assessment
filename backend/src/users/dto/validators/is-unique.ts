@@ -6,7 +6,7 @@ import {
   ValidatorConstraintInterface,
   registerDecorator,
 } from 'class-validator';
-import { UsersService } from 'src/users/users.service';
+import { UsersService } from '../../../users/users.service';
 
 @Injectable()
 @ValidatorConstraint({ name: 'isUserExist', async: true })

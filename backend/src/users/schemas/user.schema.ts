@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Gender, Genders, Horoscopes, Zodiac, Zodiacs } from 'src/libs/types';
+import { Document } from 'mongoose';
+import { Gender, Genders, Horoscopes, Zodiac, Zodiacs } from '../../libs/types';
 
 @Schema()
 export class User {
@@ -24,30 +25,32 @@ export class User {
       `^https:\/\/[a-zA-Z0-9-]+\.s3\.[a-zA-Z0-9-]+\.amazonaws\.com\/`,
     ),
   })
-  avatarUrl: string;
+  avatarUrl?: string;
 
   @Prop({ type: Date, max: new Date() })
-  birthday: Date;
+  birthday?: Date;
 
   @Prop({ min: 10, max: 300 })
-  weight: number;
+  weight?: number;
 
   @Prop({ min: 40, max: 300 })
-  height: number;
+  height?: number;
 
   @Prop({ type: String, enum: Genders })
-  gender: Gender;
+  gender?: Gender;
 
   @Prop({ type: String, enum: Zodiacs })
-  zodiac: Zodiac;
+  zodiac?: Zodiac;
 
   @Prop({ type: String, enum: Horoscopes })
-  horoscope: string;
+  horoscope?: string;
 
   @Prop({
     type: [{ type: String, minlength: 3, maxlength: 20 }],
   })
-  interests: string[];
+  interests?: string[];
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
+
+export type UserDocument = User & Document;

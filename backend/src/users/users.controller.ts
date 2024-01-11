@@ -10,14 +10,11 @@ import {
   ParseFilePipe,
   Patch,
   Post,
-  Request,
   UploadedFile,
   UseInterceptors,
   ValidationPipe,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { plainToClass } from 'class-transformer';
-import { validate } from 'class-validator';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersService } from './users.service';
@@ -63,26 +60,18 @@ export class UsersController {
     return this.usersService.findOne(id);
   }
 
+  @Get('name/:name')
+  findOneByName(@Param('name') name: string) {
+    return this.usersService.findOne({ name });
+  }
+
   @Patch(':id')
   @UseInterceptors(FileInterceptor('avatar'))
   async update(
     @Param('id') id: string,
-    @Body() updateUserDto: any,
-    @Request() req,
+    @Body() updateUserDto: UpdateUserDto,
     @UploadedFile(avatarFilePipe) avatar?: Express.Multer.File,
   ) {
-    updateUserDto.userId = req.user._id;
-
-    const errors = await validate(plainToClass(UpdateUserDto, updateUserDto));
-    if (errors.length) {
-      throw new BadRequestException(
-        errors.map((err) => ({
-          property: err.property,
-          message: err.constraints[Object.keys(err.constraints)[0]],
-        })),
-      );
-    }
-
     return this.usersService.update(id, updateUserDto, avatar);
   }
 
