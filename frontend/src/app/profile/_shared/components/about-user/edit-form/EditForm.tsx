@@ -9,7 +9,7 @@ import { ValidationError, ValidationErrorType } from '@/libs/errors'
 import { User } from '@/libs/types'
 import dayjs from 'dayjs'
 import Image from 'next/image'
-import { Dispatch, SetStateAction, useState } from 'react'
+import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
 
 type FormField =
@@ -172,6 +172,11 @@ function InputWithUnit(props: InputTextProps & { unit: string }) {
 
 function ImageInput(props: { imageUrl?: string; error?: string }) {
 	const [imageUrl, setImageUrl] = useState(props.imageUrl)
+	const [error, setError] = useState(props.error)
+
+	useEffect(() => {
+		setError(props.error)
+	}, [props.error])
 
 	return (
 		<label
@@ -195,7 +200,7 @@ function ImageInput(props: { imageUrl?: string; error?: string }) {
 				<span className='text-gray-800 dark:text-gray-100 text-sm group-hover:underline font-medium'>
 					{imageUrl ? 'Change' : 'Add'} Profile Image
 				</span>
-				{props.error && <p className='text-xs text-red-600'>{props.error}</p>}
+				{error && <p className='text-xs text-red-600'>{error}</p>}
 			</div>
 			<input
 				id='image-input'
@@ -205,7 +210,14 @@ function ImageInput(props: { imageUrl?: string; error?: string }) {
 				className='sr-only'
 				onChange={(e) => {
 					const file = e.target.files?.item(0)
-					file && setImageUrl(URL.createObjectURL(file))
+					if (!file) return
+
+					if (file?.size > 1024 * 1024 * 3) {
+						e.currentTarget.value = ''
+						return setError('File size must be less than 3MB')
+					}
+
+					setImageUrl(URL.createObjectURL(file))
 				}}
 			/>
 		</label>
