@@ -7,11 +7,13 @@ import {
   IsEnum,
   IsNotEmpty,
   IsNumber,
+  IsOptional,
   IsString,
   IsStrongPassword,
   Max,
   MaxDate,
   Min,
+  MinDate,
   MinLength,
   ValidateIf,
 } from 'class-validator';
@@ -79,6 +81,16 @@ export class CreateUserDto {
   @IsString({ each: true })
   @ArrayMinSize(1)
   interests?: string[];
+
+  @IsOptional()
+  @IsString()
+  sessionToken?: string;
+
+  @IsOptional()
+  @IsDate()
+  @Type(() => Date)
+  @MinDate(new Date())
+  sessionTokenExpiration?: Date;
 }
 
 function isTruthy(_: unknown, value: unknown) {

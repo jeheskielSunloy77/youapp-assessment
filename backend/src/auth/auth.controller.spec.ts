@@ -1,10 +1,10 @@
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
+import { Request } from 'express';
 import { mockUsers, providers } from '../libs/utils/test-utils';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-
 describe('AuthController', () => {
   let controller: AuthController;
   let service: AuthService;
@@ -56,8 +56,20 @@ describe('AuthController', () => {
       password: 'Password123!',
       passwordConf: 'Password123!',
     };
-    expect(service.register(createUserDto)).resolves.toEqual({
+    expect(controller.register(createUserDto)).resolves.toEqual({
       accessToken: await jwtService.signAsync(createUserDto),
+    });
+  });
+
+  it('should return access token when revalidated token successfuly', async () => {
+    const user = mockUsers[0];
+    const token = await jwtService.signAsync(user);
+    const request = {
+      headers: { authorization: `Bearer ${token}` },
+    } as Request;
+
+    expect(controller.revalidateToken(request)).resolves.toEqual({
+      accessToken: await jwtService.signAsync(user),
     });
   });
 });

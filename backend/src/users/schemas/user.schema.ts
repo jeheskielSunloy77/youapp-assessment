@@ -2,7 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import { Gender, Genders, Horoscopes, Zodiac, Zodiacs } from '../../libs/types';
 
-@Schema()
+@Schema({ timestamps: true })
 export class User {
   @Prop({ unique: true, minlength: 3, required: true })
   name: string;
@@ -49,6 +49,12 @@ export class User {
     type: [{ type: String, minlength: 3, maxlength: 20 }],
   })
   interests?: string[];
+
+  @Prop({ type: String, unique: true, select: false })
+  sessionToken?: string;
+
+  @Prop({ type: Date })
+  sessionTokenExpiration?: Date;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

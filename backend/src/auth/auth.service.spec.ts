@@ -49,4 +49,19 @@ describe('AuthService', () => {
       accessToken: await jwtService.signAsync(createUserDto),
     });
   });
+  it('should return user payload from token', async () => {
+    const user = mockUsers[0];
+    const token = await jwtService.signAsync(user);
+
+    expect(service.getUserFromToken(token)).resolves.toEqual(user);
+  });
+
+  it('should return revalidated token', async () => {
+    const user = mockUsers[0];
+    const token = await jwtService.signAsync(user);
+
+    expect(service.revalidateToken(token)).resolves.toEqual(
+      await jwtService.signAsync(user),
+    );
+  });
 });

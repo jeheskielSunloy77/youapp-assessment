@@ -42,7 +42,7 @@ function getAuthServiceValue(jwtService: JwtService) {
     provide: AuthService,
     useValue: {
       logIn: jest
-        .fn<Promise<{ accessToken: string }>, string[]>()
+        .fn<Promise<{ accessToken: string }>, [string, string]>()
         .mockImplementation(async (credential, password) => {
           const user = mockUsers.find(
             (user) =>
@@ -55,10 +55,15 @@ function getAuthServiceValue(jwtService: JwtService) {
           return { accessToken: await jwtService.signAsync(user) };
         }),
       register: jest
-        .fn<Promise<{ accessToken: string }>, CreateUserDto[]>()
+        .fn<Promise<{ accessToken: string }>, [CreateUserDto]>()
         .mockImplementation(async (createUserDto) => ({
           accessToken: await jwtService.signAsync(createUserDto),
         })),
+      revalidateToken: jest
+        .fn<Promise<string>, [string]>()
+        .mockImplementation(async (token) =>
+          jwtService.sign(await jwtService.verifyAsync(token)),
+        ),
       getUserFromToken: jest.fn().mockResolvedValue(mockUsers[0]),
     },
   };

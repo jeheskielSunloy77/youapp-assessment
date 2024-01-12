@@ -5,12 +5,12 @@ import { Model } from 'mongoose';
 import { S3Service } from '../s3/s3.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { User } from './schemas/user.schema';
+import { UserDocument } from './schemas/user.schema';
 
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectModel('User') private readonly userModel: Model<User>,
+    @InjectModel('User') private readonly userModel: Model<UserDocument>,
     private readonly s3Service: S3Service,
   ) {}
 
