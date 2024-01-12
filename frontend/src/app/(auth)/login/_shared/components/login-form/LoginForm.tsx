@@ -21,7 +21,7 @@ export default function LoginForm() {
 		toast.promise(promise, {
 			loading: 'Logging in...',
 			success: () => {
-				router.push('/')
+				router.push('/profile')
 				return 'Login successful'
 			},
 			error: (err) => err,

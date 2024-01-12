@@ -282,8 +282,8 @@ function ImageInput(props: { imageUrl?: string; error?: string }) {
 					height={64}
 				/>
 			) : (
-				<div className='bg-gray-700 rounded-2xl w-16 h-16 flex items-start justify-center text-amber-500 text-5xl font-extralight group-hover:bg-gray-600'>
-					<div className='mt-1'>+</div>
+				<div className='bg-gray-200 dark:bg-white dark:bg-opacity-[0.08] rounded-2xl w-16 h-16 flex items-start justify-center text-amber-500 text-5xl font-extralight group-hover:bg-gray-300 dark:group-hover:bg-gray-700'>
+					<div className='mt-1 text-gradient-gold'>+</div>
 				</div>
 			)}
 			<div>

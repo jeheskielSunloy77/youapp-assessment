@@ -4,7 +4,7 @@ import { cookies } from 'next/headers'
 import { User } from '../types'
 
 export function removeToken() {
-	cookies().set('token', '', { ...baseOptions, maxAge: 0 })
+	cookies().delete('token')
 }
 
 export function setToken(token: string, isRemember?: boolean) {
@@ -37,17 +37,15 @@ const baseOptions = {
 
 export function parseToken(token?: string) {
 	if (!token) token = cookies().get('token')?.value
-	if (!token) return null
+	if (!token) return { error: new Error('No token found') }
 
 	try {
 		const payload = jwt.verify(
 			token,
 			process.env.JWT_SECRET as string
 		) as User | null
-		return payload
+		return { payload }
 	} catch (error) {
-		console.error(error)
-
-		return null
+		return { error }
 	}
 }

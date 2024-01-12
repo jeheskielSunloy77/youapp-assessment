@@ -28,7 +28,7 @@ export default function RegisterForm() {
 		toast.promise(promise, {
 			loading: 'Registering...',
 			success: () => {
-				router.push('/')
+				router.push('/profile')
 				return 'Register successful!'
 			},
 			error: (err) => {

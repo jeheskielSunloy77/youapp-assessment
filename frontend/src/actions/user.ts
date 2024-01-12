@@ -1,30 +1,27 @@
 'use server'
 
 import { parseToken, setPayload } from '@/libs/auth/access-token'
+import axios from '@/libs/axios'
 import { ValidationErrorType } from '@/libs/errors'
 import { User } from '@/libs/types'
-import axios, { AxiosError } from 'axios'
+import { AxiosError } from 'axios'
 import { cookies } from 'next/headers'
 
 export async function updateUser(formData: FormData) {
 	const token = cookies().get('token')?.value
-	const user = parseToken(token)
-	if (!user) return
+	const { payload } = parseToken(token)
+	if (!payload) return
 
 	const avatar = formData.get('avatar')
 	if (avatar instanceof File && !avatar.size) formData.delete('avatar')
 
 	try {
-		const res = await axios.patch(
-			`http://localhost:8080/users/${user._id}`,
-			formData,
-			{
-				headers: {
-					'Content-Type': 'multipart/form-data',
-					Authorization: `Bearer ${token}`,
-				},
-			}
-		)
+		const res = await axios.patch(`/users/${payload._id}`, formData, {
+			headers: {
+				'Content-Type': 'multipart/form-data',
+				Authorization: `Bearer ${token}`,
+			},
+		})
 		setPayload(res.data)
 	} catch (error) {
 		if (!(error instanceof AxiosError)) throw error
@@ -36,14 +33,12 @@ export async function updateUser(formData: FormData) {
 
 export async function getUser() {
 	const token = cookies().get('token')?.value
-	const userPayload = parseToken(token)
-	if (!userPayload) return
+	const { payload } = parseToken(token)
+	if (!payload) return
 
 	const user: User = await axios
-		.get(`http://localhost:8080/users/${userPayload._id}`, {
-			headers: {
-				Authorization: `Bearer ${token}`,
-			},
+		.get(`/users/${payload._id}`, {
+			headers: { Authorization: `Bearer ${token}` },
 		})
 		.then((res) => res.data)
 
