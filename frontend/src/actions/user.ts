@@ -14,6 +14,7 @@ export async function updateUser(formData: FormData) {
 
 	const avatar = formData.get('avatar')
 	if (avatar instanceof File && !avatar.size) formData.delete('avatar')
+	formData.append('userId', payload._id)
 
 	try {
 		const res = await axios.patch(`/users/${payload._id}`, formData, {
