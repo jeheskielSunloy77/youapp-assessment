@@ -43,6 +43,7 @@ export default function RegisterForm() {
 
 	return (
 		<form
+			data-testid='register-form'
 			className='space-y-6'
 			onChange={(e) => setIsSubmitable(e.currentTarget.checkValidity())}
 			onSubmit={handleSubmit}
@@ -60,6 +61,7 @@ export default function RegisterForm() {
 				error={errors?.name}
 				name='name'
 				placeholder='Create Username'
+				type='text'
 				minLength={3}
 				required
 			/>

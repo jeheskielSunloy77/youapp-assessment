@@ -2,7 +2,7 @@ import Navbar from '@/components/layout/navbar/Navbar'
 import { Metadata } from 'next'
 import LoginForm from './_shared/components/login-form/LoginForm'
 
-export default function Login() {
+export default function LoginPage() {
 	return (
 		<div className='background-light'>
 			<Navbar />

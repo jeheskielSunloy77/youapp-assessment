@@ -30,11 +30,13 @@ export default function LoginForm() {
 
 	return (
 		<form
+			data-testid='login-form'
 			className='space-y-6'
 			onChange={(e) => setIsSubmitable(e.currentTarget.checkValidity())}
 			onSubmit={handleSubmit}
 		>
 			<input
+				type='text'
 				className='input-primary'
 				name='credential'
 				placeholder='Enter Username/Email'
