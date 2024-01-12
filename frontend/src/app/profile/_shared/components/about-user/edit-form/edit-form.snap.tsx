@@ -118,7 +118,7 @@ exports[`EditForm should match snapshot 1`] = `
           <input
             class="w-2/3 border dark:border-white dark:border-opacity-[0.22] input-primary text-end read-only:text-gray-400"
             id="Birthday"
-            max="2024-01-12"
+            max="2024-01-13"
             name="birthday"
             type="date"
             value="2000-12-12"

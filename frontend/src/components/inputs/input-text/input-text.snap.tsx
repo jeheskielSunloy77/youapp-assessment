@@ -10,8 +10,9 @@ exports[`InputText should match snapshot 1`] = `
       <input
         name="test"
         placeholder="test"
+        type="text"
       />
     </div>
   </div>
 </div>
-`
+`;
