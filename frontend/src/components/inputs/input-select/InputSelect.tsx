@@ -27,7 +27,7 @@ export default function InputSelect(props: InputSelectProps) {
 				)}
 				<select id={label} {...inputProps}>
 					{placeholder && (
-						<option value='' selected disabled className='dark:bg-gray-800'>
+						<option value='' disabled className='dark:bg-gray-800'>
 							{placeholder}
 						</option>
 					)}

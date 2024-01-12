@@ -10,4 +10,4 @@ exports[`GlobalProviders should match snapshot 1`] = `
     test children
   </div>
 </div>
-`
+`;

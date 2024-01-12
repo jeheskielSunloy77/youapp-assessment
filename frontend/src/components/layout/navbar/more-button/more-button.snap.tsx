@@ -7,6 +7,7 @@ exports[`MoreButton should match snapshot 1`] = `
   >
     <button
       class="button-ghost"
+      data-testid="more-button"
     >
       <svg
         class="w-6 h-6 transition-transform "

@@ -1,4 +1,4 @@
-import { AppRouterContextProviderMock } from '@/libs/test-utils/app-router-context-provider-mock'
+import { AppRouterContextProviderMock } from '@/libs/test-utils/mocks/context-providers/app-router'
 import '@testing-library/jest-dom'
 import { render } from '@testing-library/react'
 import BackButton from './BackButton'

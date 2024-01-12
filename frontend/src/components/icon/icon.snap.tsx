@@ -4,6 +4,7 @@ exports[`Icon should match snapshot 1`] = `
 <div>
   <svg
     class="w-6 h-6"
+    data-testid="close"
     fill="currentColor"
     viewBox="0 0 24 24"
     xmlns="http://www.w3.org/2000/svg"
