@@ -1,11 +1,11 @@
-interface Props
+export interface InputSelectProps
 	extends React.SelectHTMLAttributes<HTMLSelectElement>,
 		BaseInputProps {
 	placeholder?: string
 	options: { label: string; value: string }[]
 }
 
-export default function InputSelect(props: Props) {
+export default function InputSelect(props: InputSelectProps) {
 	const {
 		error,
 		containerClassName,
@@ -27,7 +27,7 @@ export default function InputSelect(props: Props) {
 				)}
 				<select id={label} {...inputProps}>
 					{placeholder && (
-						<option value='' disabled className='dark:bg-gray-800'>
+						<option value='' selected disabled className='dark:bg-gray-800'>
 							{placeholder}
 						</option>
 					)}
@@ -39,7 +39,9 @@ export default function InputSelect(props: Props) {
 				</select>
 			</div>
 			{error && (
-				<p className={errorClassName || 'text-xs text-red-600'}>{error}</p>
+				<p role='alert' className={errorClassName || 'text-xs text-red-600'}>
+					{error}
+				</p>
 			)}
 		</div>
 	)

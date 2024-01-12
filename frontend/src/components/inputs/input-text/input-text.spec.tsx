@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom'
-import { render } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import InputText, { InputTextProps } from './InputText'
 
 function renderComponent(props?: InputTextProps) {
@@ -26,6 +26,13 @@ describe('InputText', () => {
 		expect(label).toHaveTextContent('test')
 		expect(label).toHaveAttribute('for', 'test')
 		expect(input).toHaveAttribute('id', 'test')
+	})
+	it('should render an error text when provided', () => {
+		renderComponent({ error: 'error-message' })
+		const error = screen.getByRole('alert')
+
+		expect(error).toBeInTheDocument()
+		expect(error).toHaveTextContent('error-message')
 	})
 	it('should match snapshot', () => {
 		expect(renderComponent().container).toMatchSnapshot()

@@ -2,7 +2,7 @@
 import Icon from '@/components/icon/Icon'
 import { useAppContext } from '@/contexts/app-context/AppContext'
 import { useState } from 'react'
-import MoreButtonDropdown from './MoreButtonDropdown'
+import MoreButtonDropdown from './more-button-dropdown/MoreButtonDropdown'
 
 export default function MoreButton() {
 	const [isDropdown, setIsDropdown] = useState(false)
@@ -11,6 +11,7 @@ export default function MoreButton() {
 	return (
 		<div className='relative'>
 			<button
+				data-testid='more-button'
 				className='button-ghost'
 				onClick={() => setIsDropdown((prev) => !prev)}
 			>

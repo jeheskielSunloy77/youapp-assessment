@@ -21,7 +21,7 @@ function AppToaster(props: { theme: Theme }) {
 	return (
 		<Toaster
 			position='bottom-left'
-			containerClassName='hellocontainer'
+			containerClassName='app-toaster'
 			toastOptions={{
 				style: {
 					borderRadius: '0.375rem',

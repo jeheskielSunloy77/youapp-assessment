@@ -6,7 +6,7 @@ import { ReactNode, createContext, useContext } from 'react'
 export interface AppContext {
 	theme: Theme
 }
-const AppContext = createContext({} as AppContext)
+export const AppContext = createContext({} as AppContext)
 
 export function AppContextProvider(
 	props: AppContext & { children: ReactNode }

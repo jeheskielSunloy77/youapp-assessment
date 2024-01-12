@@ -3,12 +3,12 @@
 import Icon from '@/components/icon/Icon'
 import { useState } from 'react'
 
-interface Props {
+export interface InputTagsProps {
 	tags?: string[]
 	name?: string
 }
 
-export default function InputTags(props: Props) {
+export default function InputTags(props: InputTagsProps) {
 	const [tags, setTags] = useState(props.tags || [])
 
 	function handleOnKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
@@ -28,6 +28,7 @@ export default function InputTags(props: Props) {
 			{tags.map((tag) => (
 				<div
 					key={tag}
+					data-testid='tag-container'
 					className='flex items-center gap-2 py-1 px-2 bg-white bg-opacity-10 rounded-sm'
 				>
 					<input name={props.name} type='hidden' value={tag} />
@@ -41,6 +42,7 @@ export default function InputTags(props: Props) {
 				</div>
 			))}
 			<input
+				role='textbox'
 				type='text'
 				className={`border-none outline-none bg-transparent ${
 					tags.length ? 'w-1/2' : 'w-full'

@@ -41,7 +41,9 @@ export default function InputText(props: InputTextProps) {
 				{icon}
 			</div>
 			{error && (
-				<p className={errorClassName || 'text-xs text-red-600'}>{error}</p>
+				<p role='alert' className={errorClassName || 'text-xs text-red-600'}>
+					{error}
+				</p>
 			)}
 		</div>
 	)
