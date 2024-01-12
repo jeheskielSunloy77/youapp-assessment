@@ -20,6 +20,7 @@ export default function AboutUser(props: { user: Partial<User> }) {
 				{isEditing ? (
 					<button
 						key='save-n-update'
+						data-testid='save-n-update'
 						type='submit'
 						form='about-user'
 						className='text-gradient-gold text-sm hover:underline'
@@ -29,6 +30,7 @@ export default function AboutUser(props: { user: Partial<User> }) {
 				) : (
 					<button
 						key='open-edit-form'
+						data-testid='open-edit-form'
 						className='button-ghost'
 						onClick={() => setIsEditing(true)}
 					>

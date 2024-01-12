@@ -10,7 +10,7 @@ import AboutUser from './_shared/components/about-user/AboutUser'
 
 export const metadata: Metadata = { title: 'User profile' }
 
-export default async function Home() {
+export default async function ProfilePage() {
 	const user = await getUser()
 	if (!user) return redirect('/login')
 
@@ -92,15 +92,15 @@ function IntrestList(props: { interests?: string[] }) {
 		)
 
 	return (
-		<div className='flex items-center flex-wrap gap-4'>
+		<ul className='flex items-center flex-wrap gap-4'>
 			{props.interests.map((intrest) => (
-				<div
+				<li
 					key={intrest}
 					className='py-2 px-4 rounded-full bg-gray-200 dark:bg-opacity-[0.06]  text-black dark:text-white font-semibold'
 				>
 					{intrest}
-				</div>
+				</li>
 			))}
-		</div>
+		</ul>
 	)
 }

@@ -150,6 +150,7 @@ function InputWithUnit(props: InputTextProps & { unit: string }) {
 
 	return (
 		<InputText
+			data-testid='input-with-unit'
 			className={`w-2/3 border dark:border-white dark:border-opacity-[0.22] input-primary text-end read-only:text-gray-400 ${
 				isFilled ? 'pr-10' : ''
 			}`}
@@ -160,7 +161,10 @@ function InputWithUnit(props: InputTextProps & { unit: string }) {
 			errorClassName='text-xs text-red-600 text-end'
 			icon={
 				isFilled && (
-					<span className='absolute top-1/2 right-4 transform -translate-y-1/2 text-gray-600 dark:text-gray-400 text-sm'>
+					<span
+						data-testid='unit-label'
+						className='absolute top-1/2 right-4 transform -translate-y-1/2 text-gray-600 dark:text-gray-400 text-sm'
+					>
 						{props.unit}
 					</span>
 				)

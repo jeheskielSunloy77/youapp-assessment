@@ -19,6 +19,7 @@ export default function InputText(props: InputTextProps) {
 		errorClassName,
 		icon,
 		onChange,
+		type,
 		...inputProps
 	} = props
 
@@ -32,6 +33,7 @@ export default function InputText(props: InputTextProps) {
 				)}
 				<input
 					id={label}
+					type={type || 'text'}
 					{...inputProps}
 					onChange={(e) => {
 						setError(e.currentTarget.validationMessage)
