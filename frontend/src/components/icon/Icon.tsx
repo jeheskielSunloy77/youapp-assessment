@@ -9,6 +9,7 @@ export default function Icon({ name, ...svgProps }: Props) {
 			fill='currentColor'
 			viewBox='0 0 24 24'
 			className='w-6 h-6'
+			data-testid={name}
 			{...svgProps}
 		>
 			<path d={iconList[name].d} />

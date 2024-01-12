@@ -23,7 +23,7 @@ export default function InputText(props: InputTextProps) {
 	} = props
 
 	return (
-		<div className='space-y-0.5'>
+		<div className='space-y-0.5' role='container'>
 			<div className={containerClassName}>
 				{label && (
 					<label htmlFor={label} className={labelClassName}>
