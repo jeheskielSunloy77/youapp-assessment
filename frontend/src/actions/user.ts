@@ -47,3 +47,9 @@ export async function getUser() {
 
 	return user
 }
+
+export async function mustGetUser() {
+	const user = await getUser()
+	if (!user) throw new Error('User not found')
+	return user
+}

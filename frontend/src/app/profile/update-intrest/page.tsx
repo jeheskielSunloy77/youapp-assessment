@@ -1,10 +1,9 @@
-import { getUser } from '@/actions/user'
+import { mustGetUser } from '@/actions/user'
 import Navbar from '@/components/layout/navbar/Navbar'
-import { User } from '@/libs/types'
 import UpdateInterestsForm from './_shared/components/update-interests-form/UpdateInterestsForm'
 
 export default async function UpdateIntrest() {
-	const user = (await getUser()) as User
+	const user = await mustGetUser()
 
 	return (
 		<div className='background-light min-h-screen pt-28'>

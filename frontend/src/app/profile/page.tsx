@@ -1,18 +1,16 @@
-import { getUser } from '@/actions/user'
+import { mustGetUser } from '@/actions/user'
 import Icon, { IconName } from '@/components/icon/Icon'
 import Navbar from '@/components/layout/navbar/Navbar'
 import dayjs from 'dayjs'
 import { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
-import { redirect } from 'next/navigation'
 import AboutUser from './_shared/components/about-user/AboutUser'
 
 export const metadata: Metadata = { title: 'User profile' }
 
 export default async function ProfilePage() {
-	const user = await getUser()
-	if (!user) return redirect('/login')
+	const user = await mustGetUser()
 
 	const age = user.birthday
 		? dayjs().diff(dayjs(user.birthday), 'year').toString()
