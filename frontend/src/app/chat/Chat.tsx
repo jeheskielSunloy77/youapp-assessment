@@ -15,7 +15,7 @@ export default function Chat(props: { token: string }) {
 	const socket = useRef<Socket>()
 
 	useEffect(() => {
-		socket.current = io('http://localhost:8080', {
+		socket.current = io(process.env.BACKEND_URL as string, {
 			extraHeaders: {
 				Authorization: 'Bearer ' + props.token,
 			},
